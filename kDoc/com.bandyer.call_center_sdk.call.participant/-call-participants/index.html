@@ -1,0 +1,82 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CallParticipants - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.call_center_sdk.call.participant</a>&nbsp;/&nbsp;<a href="./index.html">CallParticipants</a><br/>
+<br/>
+<h1>CallParticipants</h1>
+<code><span class="keyword">data</span> <span class="keyword">class </span><span class="identifier">CallParticipants</span></code>
+<p>Class which represents all the participants in a call</p>
+<h3>Constructors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="-init-.html">&lt;init&gt;</a></p>
+</td>
+<td>
+<code><span class="identifier">CallParticipants</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call.participant.CallParticipants$<init>(com.bandyer.call_center_sdk.call.participant.CallParticipant, kotlin.collections.List((com.bandyer.call_center_sdk.call.participant.CallParticipant)))/caller">caller</span><span class="symbol">:</span>&nbsp;<a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.call_center_sdk.call.participant.CallParticipants$<init>(com.bandyer.call_center_sdk.call.participant.CallParticipant, kotlin.collections.List((com.bandyer.call_center_sdk.call.participant.CallParticipant)))/callees">callees</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">&gt;</span><span class="symbol">?</span>&nbsp;<span class="symbol">=</span>&nbsp;null<span class="symbol">)</span></code></td>
+</tr>
+</tbody>
+</table>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="callees.html">callees</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">callees</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>List of users that have been called</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="caller.html">caller</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">caller</span><span class="symbol">: </span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a></code>
+<p>User that has initiated the call</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="observers.html">observers</a></p>
+</td>
+<td>
+<code><span class="keyword">val </span><span class="identifier">observers</span><span class="symbol">: </span><span class="identifier">OnCallParticipantObservable</span></code>
+<p>Classes interested in the status change of the callee</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-observer.html">addObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call.participant.CallParticipants$addObserver(com.bandyer.call_center_sdk.call.participant.CallParticipantObserver)/callParticipantObserver">callParticipantObserver</span><span class="symbol">:</span>&nbsp;<a href="../-call-participant-observer/index.html"><span class="identifier">CallParticipantObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">CallParticipants</span></a></code>
+<p>Method to add an observer to the call participants.
+The observer will be notified when a status change has occurred for each user</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-observer.html">removeObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call.participant.CallParticipants$removeObserver(com.bandyer.call_center_sdk.call.participant.CallParticipantObserver)/callParticipantObserver">callParticipantObserver</span><span class="symbol">:</span>&nbsp;<a href="../-call-participant-observer/index.html"><span class="identifier">CallParticipantObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">CallParticipants</span></a></code>
+<p>Method to remove an observer, usually used when not interested anymore in any event coming from the call participants.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

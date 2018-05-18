@@ -1,0 +1,7 @@
+$dokka.format:html
+$dokka.linkExtension:html
+
+com.bandyer.call_center_sdk
+com.bandyer.call_center_sdk.call
+com.bandyer.call_center_sdk.call.participant
+com.bandyer.call_center_sdk.call_center

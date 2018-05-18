@@ -1,0 +1,203 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CallCenter - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.call_center_sdk.call_center</a>&nbsp;/&nbsp;<a href="./index.html">CallCenter</a><br/>
+<br/>
+<h1>CallCenter</h1>
+<code><span class="keyword">class </span><span class="identifier">CallCenter</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">CallCenterInstance</span><span class="symbol">, </span><span class="identifier">DialChannelIncomingCallObserver</span><span class="symbol">, </span><span class="identifier">DialingChannelObserver</span><span class="symbol">, </span><a href="../../com.bandyer.call_center_sdk.call/-on-call-creation-observer/index.html"><span class="identifier">OnCallCreationObserver</span></a><span class="symbol">, </span><a href="../../com.bandyer.call_center_sdk.call/-on-call-event-observer/index.html"><span class="identifier">OnCallEventObserver</span></a></code>
+<p>CallCenterInstance</p>
+<p>The call center has the responsibility of creation of the calls and to notify the user when an incoming call has been received</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="busy.html">busy</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">busy</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-boolean/index.html"><span class="identifier">Boolean</span></a></code>
+<p>Indicates if the user is already in another call</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="ongoing-call.html">ongoingCall</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">ongoingCall</span><span class="symbol">: </span><span class="identifier">BaseCall</span><span class="symbol">?</span></code>
+<p>The current call that is being managed</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="status.html">status</a></p>
+</td>
+<td>
+<code><span class="keyword">var </span><span class="identifier">status</span><span class="symbol">: </span><a href="../-call-center-status/index.html"><span class="identifier">CallCenterStatus</span></a></code>
+<p>The status of the call center</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-observer.html">addObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$addObserver(com.bandyer.call_center_sdk.call_center.OnIncomingCallObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-incoming-call-observer/index.html"><span class="identifier">OnIncomingCallObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">CallCenter</span></a></code>
+<p>Method to add an observer for incoming calls
+The observer will be notified when a new call has arrived</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="add-status-observer.html">addStatusObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addStatusObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$addStatusObserver(com.bandyer.call_center_sdk.call_center.OnCallCenterStatusObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-call-center-status-observer/index.html"><span class="identifier">OnCallCenterStatusObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">CallCenterInstance</span></code>
+<p>Method to add an observer for CallCenter's status changes
+The observer will be notified when a new status ahs been set</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="call.html">call</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">call</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$call(kotlin.collections.List((com.bandyer.call_center_sdk.call.User)), com.bandyer.call_center_sdk.call.CallOptions, com.bandyer.call_center_sdk.call.OnCallCreationObserver)/users">users</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../../com.bandyer.call_center_sdk.call/-user/index.html"><span class="identifier">User</span></a><span class="symbol">&gt;</span><span class="symbol">, </span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$call(kotlin.collections.List((com.bandyer.call_center_sdk.call.User)), com.bandyer.call_center_sdk.call.CallOptions, com.bandyer.call_center_sdk.call.OnCallCreationObserver)/callOptions">callOptions</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-call-options/index.html"><span class="identifier">CallOptions</span></a><span class="symbol">?</span><span class="symbol">, </span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$call(kotlin.collections.List((com.bandyer.call_center_sdk.call.User)), com.bandyer.call_center_sdk.call.CallOptions, com.bandyer.call_center_sdk.call.OnCallCreationObserver)/onCallCreationObserver">onCallCreationObserver</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-on-call-creation-observer/index.html"><span class="identifier">OnCallCreationObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method used to call other users</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="destroy.html">destroy</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">destroy</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method to clean the current CallCenter</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="join-call.html">joinCall</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">joinCall</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$joinCall(kotlin.String, com.bandyer.call_center_sdk.call.OnCallCreationObserver)/url">url</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$joinCall(kotlin.String, com.bandyer.call_center_sdk.call.OnCallCreationObserver)/onCallCreationObserver">onCallCreationObserver</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-on-call-creation-observer/index.html"><span class="identifier">OnCallCreationObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method used to join a call with a given url</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-creation-error.html">onCallCreationError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">onCallCreationError</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$onCallCreationError(com.bandyer.call_center_sdk.call_center.CallException)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../-call-exception/index.html"><span class="identifier">CallException</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when an error has occurred during the creation process</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-creation-success.html">onCallCreationSuccess</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">onCallCreationSuccess</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$onCallCreationSuccess(com.bandyer.call_center_sdk.call.Call)/call">call</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-call/index.html"><span class="identifier">Call</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call has been created with success</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-ended.html">onCallEnded</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">onCallEnded</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$onCallEnded(com.bandyer.call_center_sdk.call.Call, com.bandyer.call_center_sdk.call.Call.EndReason)/call">call</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-call/index.html"><span class="identifier">Call</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$onCallEnded(com.bandyer.call_center_sdk.call.Call, com.bandyer.call_center_sdk.call.Call.EndReason)/callEndReason">callEndReason</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-call/-end-reason/index.html"><span class="identifier">EndReason</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call has ended</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-error.html">onCallError</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">onCallError</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$onCallError(com.bandyer.call_center_sdk.call.Call, com.bandyer.call_center_sdk.call_center.CallException)/call">call</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-call/index.html"><span class="identifier">Call</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$onCallError(com.bandyer.call_center_sdk.call.Call, com.bandyer.call_center_sdk.call_center.CallException)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../-call-exception/index.html"><span class="identifier">CallException</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when an error has occurred with the call</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-started.html">onCallStarted</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">onCallStarted</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$onCallStarted(com.bandyer.call_center_sdk.call.Call, com.bandyer.core_av.room.RoomToken)/call">call</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-call/index.html"><span class="identifier">Call</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$onCallStarted(com.bandyer.call_center_sdk.call.Call, com.bandyer.core_av.room.RoomToken)/roomToken">roomToken</span><span class="symbol">:</span>&nbsp;<span class="identifier">RoomToken</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call has been set-up</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="pause.html">pause</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">pause</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method to put on pause the CallCenter lifecycle</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-observer.html">removeObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$removeObserver(com.bandyer.call_center_sdk.call_center.OnIncomingCallObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-incoming-call-observer/index.html"><span class="identifier">OnIncomingCallObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">CallCenter</span></a></code>
+<p>Method to remove an observer, usually used when not interested anymore in any event coming from the callCenter.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-status-observer.html">removeStatusObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeStatusObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$removeStatusObserver(com.bandyer.call_center_sdk.call_center.OnCallCenterStatusObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-call-center-status-observer/index.html"><span class="identifier">OnCallCenterStatusObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">CallCenterInstance</span></code>
+<p>Method to remove an observer, usually used when not interested anymore in the status of the callCenter.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="resume.html">resume</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">resume</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method to resume the CallCenter lifecycle</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="start.html">start</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">start</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.call_center_sdk.call_center.CallCenter$start(com.bandyer.call_center_sdk.call.User)/user">user</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.call_center_sdk.call/-user/index.html"><span class="identifier">User</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method used to start the CallCenter</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Companion Object Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-instance.html">getInstance</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">getInstance</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">CallCenterInstance</span></code>
+<p>Method to get the CallCenterInstance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
