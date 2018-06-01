@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>OnCallEventObserver - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.communication_center.call</a>&nbsp;/&nbsp;<a href="./index.html">OnCallEventObserver</a><br/>
+<br/>
+<h1>OnCallEventObserver</h1>
+<code><span class="keyword">interface </span><span class="identifier">OnCallEventObserver</span></code>
+<p>CallEvent Observer</p>
+<p>Used to notify when the call has changed status</p>
+<p><strong>Author</strong><br/>
+kristiyan</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="on-call-ended.html">onCallEnded</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallEnded</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.OnCallEventObserver$onCallEnded(com.bandyer.communication_center.call.Call, com.bandyer.communication_center.call.Call.EndReason)/call">call</span><span class="symbol">:</span>&nbsp;<a href="../-call/index.html"><span class="identifier">Call</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.communication_center.call.OnCallEventObserver$onCallEnded(com.bandyer.communication_center.call.Call, com.bandyer.communication_center.call.Call.EndReason)/callEndReason">callEndReason</span><span class="symbol">:</span>&nbsp;<a href="../-call/-end-reason/index.html"><span class="identifier">EndReason</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call has ended</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-error.html">onCallError</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallError</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.OnCallEventObserver$onCallError(com.bandyer.communication_center.call.Call, com.bandyer.communication_center.call_client.CallException)/call">call</span><span class="symbol">:</span>&nbsp;<a href="../-call/index.html"><span class="identifier">Call</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.communication_center.call.OnCallEventObserver$onCallError(com.bandyer.communication_center.call.Call, com.bandyer.communication_center.call_client.CallException)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.communication_center.call_client/-call-exception/index.html"><span class="identifier">CallException</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when an error has occurred with the call</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-started.html">onCallStarted</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallStarted</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.OnCallEventObserver$onCallStarted(com.bandyer.communication_center.call.Call, com.bandyer.core_av.room.RoomToken)/call">call</span><span class="symbol">:</span>&nbsp;<a href="../-call/index.html"><span class="identifier">Call</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.communication_center.call.OnCallEventObserver$onCallStarted(com.bandyer.communication_center.call.Call, com.bandyer.core_av.room.RoomToken)/roomToken">roomToken</span><span class="symbol">:</span>&nbsp;<a href="https://bandyer.github.io/Android-CoreAV/kDoc/com.bandyer.core_av.room/-room-token/index.html"><span class="identifier">RoomToken</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call has been set-up</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-status-changed.html">onCallStatusChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallStatusChanged</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.OnCallEventObserver$onCallStatusChanged(com.bandyer.communication_center.call.Call, com.bandyer.communication_center.call.Call.Status)/call">call</span><span class="symbol">:</span>&nbsp;<a href="../-call/index.html"><span class="identifier">Call</span></a><span class="symbol">, </span><span class="identifier" id="com.bandyer.communication_center.call.OnCallEventObserver$onCallStatusChanged(com.bandyer.communication_center.call.Call, com.bandyer.communication_center.call.Call.Status)/status">status</span><span class="symbol">:</span>&nbsp;<a href="../-call/-status/index.html"><span class="identifier">Status</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call has changed status</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../../com.bandyer.communication_center.call_client/-call-client/index.html">CallClient</a></p>
+</td>
+<td>
+<code><span class="keyword">class </span><span class="identifier">CallClient</span>&nbsp;<span class="symbol">:</span>&nbsp;<span class="identifier">CallClientInstance</span><span class="symbol">, </span><a href="../-on-call-creation-observer/index.html"><span class="identifier">OnCallCreationObserver</span></a><span class="symbol">, </span><a href="./index.html"><span class="identifier">OnCallEventObserver</span></a></code>
+<p>It's the main item required to connect to the Bandyer platform.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

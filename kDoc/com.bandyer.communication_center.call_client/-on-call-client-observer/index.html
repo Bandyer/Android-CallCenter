@@ -1,0 +1,57 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>OnCallClientObserver - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.communication_center.call_client</a>&nbsp;/&nbsp;<a href="./index.html">OnCallClientObserver</a><br/>
+<br/>
+<h1>OnCallClientObserver</h1>
+<code><span class="keyword">interface </span><span class="identifier">OnCallClientObserver</span></code>
+<p>CallClient status observer</p>
+<p><strong>Author</strong><br/>
+kristiyan</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="on-call-client-destroyed.html">onCallClientDestroyed</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallClientDestroyed</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call client been destroyed</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-client-initialized.html">onCallClientInitialized</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallClientInitialized</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call_client.OnCallClientObserver$onCallClientInitialized(com.bandyer.communication_center.call_client.User)/sessionUser">sessionUser</span><span class="symbol">:</span>&nbsp;<a href="../-user/index.html"><span class="identifier">User</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call client been started</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-client-resumed.html">onCallClientResumed</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallClientResumed</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call client been resumed</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-client-stopped.html">onCallClientStopped</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallClientStopped</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method called when the call client been stopped</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

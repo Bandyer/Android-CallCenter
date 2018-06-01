@@ -1,0 +1,63 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CallParticipants - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.communication_center.call.participant</a>&nbsp;/&nbsp;<a href="./index.html">CallParticipants</a><br/>
+<br/>
+<h1>CallParticipants</h1>
+<code><span class="keyword">interface </span><span class="identifier">CallParticipants</span></code>
+<p>Interface which represents all the participants in a call</p>
+<p><strong>Author</strong><br/>
+kristiyan</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="callees.html">callees</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">callees</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>List of users that have been called</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="caller.html">caller</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">caller</span><span class="symbol">: </span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a></code>
+<p>User that has initiated the call</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="add-observer.html">addObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">addObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.participant.CallParticipants$addObserver(com.bandyer.communication_center.call.participant.OnCallParticipantObserver)/onCallParticipantObserver">onCallParticipantObserver</span><span class="symbol">:</span>&nbsp;<a href="../-on-call-participant-observer/index.html"><span class="identifier">OnCallParticipantObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">CallParticipants</span></a></code>
+<p>Method to add an observer to the call participants.
+The observer will be notified when a status change has occurred for each user</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="remove-observer.html">removeObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">removeObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.participant.CallParticipants$removeObserver(com.bandyer.communication_center.call.participant.OnCallParticipantObserver)/onCallParticipantObserver">onCallParticipantObserver</span><span class="symbol">:</span>&nbsp;<a href="../-on-call-participant-observer/index.html"><span class="identifier">OnCallParticipantObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">CallParticipants</span></a></code>
+<p>Method to remove an observer, usually used when not interested anymore in any event coming from the call participants.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

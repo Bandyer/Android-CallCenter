@@ -1,0 +1,132 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>IncomingCall - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.communication_center.call</a>&nbsp;/&nbsp;<a href="./index.html">IncomingCall</a><br/>
+<br/>
+<h1>IncomingCall</h1>
+<code><span class="keyword">interface </span><span class="identifier">IncomingCall</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="../-call/index.html"><span class="identifier">Call</span></a></code>
+<p>It represents a <code>Call</code> that has been received.</p>
+<p><strong>Author</strong><br/>
+kristiyan</p>
+<h3>Inherited Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-call/call-i-d.html">callID</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">callID</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a></code>
+<p>Identifier for the call</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-call/direction.html">direction</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">direction</span><span class="symbol">: </span><a href="../-call/-direction/index.html"><span class="identifier">Direction</span></a></code>
+<p>Indicates if the call is incoming or outgoing</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-call/end-reason.html">endReason</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">endReason</span><span class="symbol">: </span><a href="../-call/-end-reason/index.html"><span class="identifier">EndReason</span></a></code>
+<p>Reason the call has ended</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-call/options.html">options</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">options</span><span class="symbol">: </span><a href="../-call-options/index.html"><span class="identifier">CallOptions</span></a><span class="symbol">?</span></code>
+<p>Additional options set on the call</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-call/participants.html">participants</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">participants</span><span class="symbol">: </span><a href="../../com.bandyer.communication_center.call.participant/-call-participants/index.html"><span class="identifier">CallParticipants</span></a></code>
+<p>All the participants in the call, you may also observe their status</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-call/status.html">status</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">status</span><span class="symbol">: </span><a href="../-call/-status/index.html"><span class="identifier">Status</span></a></code>
+<p>Status of the call</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="answer.html">answer</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">answer</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>It notifies the other participants of the intent of taking part in the conversation.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="decline.html">decline</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">decline</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.IncomingCall$decline(com.bandyer.communication_center.call.Call.DeclineReason)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../-call/-decline-reason/index.html"><span class="identifier">DeclineReason</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>It notifies the other participants of the intent of NOT taking part in the conversation.
+This is an asynchronous operation, upon success the call will switch to ended state, in case of failure the call will end but it will switch to failed state.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inherited Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-call/add-event-observer.html">addEventObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">addEventObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.Call$addEventObserver(com.bandyer.communication_center.call.OnCallEventObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-call-event-observer/index.html"><span class="identifier">OnCallEventObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-call/index.html"><span class="identifier">Call</span></a></code>
+<p>Method to add an observer to the call.
+The observer will be notified when a status change has occurred</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-call/hang-up.html">hangUp</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">hangUp</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.Call$hangUp(com.bandyer.communication_center.call.Call.EndReason)/reason">reason</span><span class="symbol">:</span>&nbsp;<a href="../-call/-end-reason/index.html"><span class="identifier">EndReason</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>It ends a call, switching to ended state and closing the connections with the other participants.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="../-call/remove-event-observer.html">removeEventObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">removeEventObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.Call$removeEventObserver(com.bandyer.communication_center.call.OnCallEventObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-call-event-observer/index.html"><span class="identifier">OnCallEventObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-call/index.html"><span class="identifier">Call</span></a></code>
+<p>Method to remove an observer, usually used when not interested anymore in any event coming from the call.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
