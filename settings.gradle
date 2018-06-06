@@ -1,0 +1,9 @@
+/*
+ * Copyright (C) 2018 Bandyer S.r.l. All Rights Reserved.
+ * See LICENSE.txt for licensing information
+ */
+
+include ':demo_communication_center'
+include ':demo_communication_center_2'
+project(':demo_communication_center').projectDir = file('demo_communication_center/app')
+project(':demo_communication_center_2').projectDir = file('demo_communication_center_2/app')
