@@ -68,7 +68,6 @@ dependencies {
     releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$leakCanaryVersion"
 
     implementation("com.github.hotchemi:permissionsdispatcher:${permissionsdispatcherVersion}") {
-        // if you don't use android.app.Fragment you can exclude support for them
         exclude module: "support-v13"
     }
     kapt "com.github.hotchemi:permissionsdispatcher-processor:${permissionsdispatcherVersion}"
