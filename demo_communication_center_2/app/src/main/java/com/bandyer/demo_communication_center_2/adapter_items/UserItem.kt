@@ -13,9 +13,9 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_user.*
 
 /**
- * A simple RecyclerView item used to display the user name as a cell in the list.
+ * A simple RecyclerView item used to display the user alias as a cell in the list.
  */
-class UserItem(var name: String) : AbstractItem<UserItem, UserItem.ViewHolder>() {
+class UserItem(var userAlias: String) : AbstractItem<UserItem, UserItem.ViewHolder>() {
 
     override fun getType(): Int {
         return R.id.user_item_id
@@ -32,11 +32,11 @@ class UserItem(var name: String) : AbstractItem<UserItem, UserItem.ViewHolder>()
     class ViewHolder(override val containerView: View) : FastAdapter.ViewHolder<UserItem>(containerView), LayoutContainer {
 
         override fun bindView(item: UserItem, payloads: List<Any>) {
-            userName.text = item.name
+            userAlias.text = item.userAlias
         }
 
         override fun unbindView(item: UserItem) {
-            userName.text = null
+            userAlias.text = null
         }
     }
 }

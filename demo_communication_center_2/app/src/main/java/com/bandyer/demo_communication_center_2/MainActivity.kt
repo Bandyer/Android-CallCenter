@@ -62,8 +62,8 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
         else setUpRecyclerView()
 
         // get the user that is currently logged in the sample app
-        val userName = LoginManager.getLoggedUser(this)
-        userGreeting.text = String.format(resources.getString(R.string.pick_users), userName)
+        val userAlias = LoginManager.getLoggedUser(this)
+        userGreeting.text = String.format(resources.getString(R.string.pick_users), userAlias)
 
         // in case the MainActivity has been shown by opening an external link, handle it
         handleExternalUrl(intent)
@@ -105,6 +105,8 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
         fastAdapter = FastItemAdapter()
         fastAdapter?.withSelectable(true)
 
+        fastAdapter?.clear()
+
         // Fetch the sample users you can use to login with.
         MockedNetwork.getSampleUsers(this, object : Callback<BandyerUsers> {
 
@@ -113,7 +115,7 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
                 // Add each user(except the logged one) to the recyclerView adapter to be displayed in the list.
                 for (user in response.body()!!.user_id_list!!)
                     if (user != LoginManager.getLoggedUser(this@MainActivity))
-                        fastAdapter!!.add(UserSelectionItem(user))
+                        fastAdapter?.add(UserSelectionItem(user))
             }
 
             override fun onFailure(call: retrofit2.Call<BandyerUsers>, t: Throwable) {
@@ -222,6 +224,14 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
 
     override fun onCallClientDestroyed() {
         Log.d("CallClient", "destroyed")
+    }
+
+    override fun onCallClientReconnecting() {
+        Log.d("CallClient", "reconnecting")
+    }
+
+    override fun onCallClientFailed() {
+        Log.e("CallClient", "failed")
     }
 
     companion object {

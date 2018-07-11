@@ -82,7 +82,7 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
      * Hangup in case of back pressed
      */
     override fun onBackPressed() {
-        call!!.hangUp(Call.EndReason.HANGUP)
+        call?.hangUp(Call.EndReason.HANGUP)
         super.onBackPressed()
     }
 

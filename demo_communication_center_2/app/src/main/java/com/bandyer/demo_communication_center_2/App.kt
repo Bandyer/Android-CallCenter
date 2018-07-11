@@ -30,7 +30,7 @@ class App : Application() {
         val client = OkHttpClient.Builder().addNetworkInterceptor(StethoInterceptor())
 
         // The sdk needs to me initialized with a builder pattern.
-        // the app_id {@link com.bandyer.demo_communication_center.R#}
+        // the app_id check values/configuration.xml
         val commBuilder = CommunicationCenter.Builder(this, getString(R.string.app_id))
 
 

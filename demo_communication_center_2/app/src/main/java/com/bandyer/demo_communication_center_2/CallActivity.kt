@@ -10,27 +10,38 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
+import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
-import android.widget.LinearLayout
+import android.view.ViewGroup
 import com.bandyer.communication_center.call.Call
 import com.bandyer.communication_center.call.OnCallEventObserver
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.communication_center.call_client.CallException
+import com.bandyer.core_av.OnStreamListener
 import com.bandyer.core_av.Stream
+import com.bandyer.core_av.audiosession.AudioOutputDeviceType
+import com.bandyer.core_av.audiosession.AudioSession
+import com.bandyer.core_av.audiosession.AudioSessionListener
+import com.bandyer.core_av.audiosession.AudioSessionOptions
 import com.bandyer.core_av.capturer.CapturerAV
 import com.bandyer.core_av.publisher.Publisher
 import com.bandyer.core_av.room.Room
 import com.bandyer.core_av.room.RoomObserver
+import com.bandyer.core_av.room.RoomState
 import com.bandyer.core_av.room.RoomToken
 import com.bandyer.core_av.subscriber.Subscriber
+import com.bandyer.core_av.utils.proximity_listener.ProximitySensor
+import com.bandyer.core_av.utils.proximity_listener.ProximitySensorListener
 import com.bandyer.core_av.view.BandyerView
 import com.bandyer.core_av.view.OnViewStatusListener
+import com.bandyer.demo_communication_center_2.R.id.*
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.android.synthetic.main.activity_call_actions.*
+
 
 /**
  * This activity will take care of handling the actual video call process.
@@ -44,7 +55,8 @@ import kotlinx.android.synthetic.main.activity_call_actions.*
  *
  * @author kristiyan
  */
-class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver {
+class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, ProximitySensorListener {
+
 
     private var room: Room? = null
 
@@ -52,9 +64,47 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver {
     private var publisher: Publisher? = null
     private var isVolumeMuted = false
 
+    var snackbar: Snackbar? = null
+
+    override fun onProximitySensorChanged(isNear: Boolean) {
+        Log.e("CallActivity", "sensor $isNear")
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_call)
+
+        // if you are interested only in the proximity sensor you may use our utility
+        ProximitySensor.bind(this)
+
+        // if you want to handle the different audio devices setup the AudioSession
+        AudioSession.getInstance().startWithOptions(
+                this,
+                AudioSessionOptions.Builder()
+                        // .disableAutomaticAudioDeviceChange()
+                        .withDefaultSpeakerPhoneOutputHardWareDevice()
+                        .build(),
+                object : AudioSessionListener {
+                    override fun onOutputDeviceConnected(oldAudioOutputDevice: AudioOutputDeviceType, connectedAudioOutputDevice: AudioOutputDeviceType, availableOutputs: List<AudioOutputDeviceType>) {
+                        Log.e("Audio", "changed from old: " + oldAudioOutputDevice.name + " to connected: " + connectedAudioOutputDevice.name)
+                        snackbar?.dismiss()
+                        snackbar = Snackbar.make(hangup!!, connectedAudioOutputDevice.name, Snackbar.LENGTH_SHORT)
+                        snackbar?.show()
+                    }
+
+                    override fun onOutputDeviceAttached(currentAudioOutputDevice: AudioOutputDeviceType, attachedAudioOutputDevice: AudioOutputDeviceType, availableOutputs: List<AudioOutputDeviceType>) {
+                        Log.e("Audio", "current: " + currentAudioOutputDevice.name + " attached audioDevice: " + attachedAudioOutputDevice.name)
+                    }
+
+                    override fun onOutputDeviceDetached(currentAudioOutputDevice: AudioOutputDeviceType, detachedAudioOutputDevice: AudioOutputDeviceType, availableOutputs: List<AudioOutputDeviceType>) {
+                        Log.e("Audio", "current: " + currentAudioOutputDevice.name + " detached audioDevice: " + detachedAudioOutputDevice.name)
+                    }
+                },
+                object : ProximitySensorListener {
+                    override fun onProximitySensorChanged(isNear: Boolean) {
+
+                    }
+                })
 
         hangup.setOnClickListener {
             onBackPressed()
@@ -122,23 +172,28 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver {
         // Once we have the token we will start joining the virtual room.
         // This must be done only once.
         room = Room(RoomToken(token))
-        room!!.addRoomObserver(this)
-        room!!.join()
+        room?.addRoomObserver(this)
+        room?.join()
     }
 
-    /**
-     * on Stop leave room
-     */
-    override fun onStop() {
-        super.onStop()
-        // leave room
-        if (room != null)
-            room!!.leave()
+    override fun onPause() {
+        snackbar?.dismiss()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        room?.leave()
+        super.onDestroy()
     }
 
     override fun onBackPressed() {
+        finish()
+    }
+
+    override fun finish() {
         setResult(Activity.RESULT_OK)
-        super.onBackPressed()
+        room?.leave()
+        super.finish()
     }
 
     private fun getDp(size: Int): Int {
@@ -159,31 +214,37 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver {
     override fun onRemotePublisherJoined(stream: Stream) {
         val subscriber = Subscriber(stream)
         //subscriber.addSubscribeObserver();
-        room!!.subscribe(subscriber)
+        room?.subscribe(subscriber)
 
         // set the view where the stream will be played
         val subscriberView = BandyerView(this)
+        subscriberView.tag = stream.streamId
+        subscriberView.bringToFront(true)
         val size = getDp(120)
 
+
         // add the view to the view-list of subscribers
-        subscribersListView!!.addView(subscriberView, LinearLayout.LayoutParams(size, size))
+        subscribersListView!!.addView(subscriberView, ViewGroup.LayoutParams(size, size))
 
         // bind the subscriber to a view, where the video/audio will be played
-        subscriber.setView(subscriberView, object : OnViewStatusListener {
+        subscriber.setView(subscriberView, object : OnStreamListener {
 
             override fun onReadyToPlay(stream: Stream) {
                 subscriberView.play(stream)
             }
-
-            override fun onFirstFrameRendered() {
-
-            }
-
-            override fun onViewSizeChanged(width: Int, height: Int, rotationDegree: Int) {
-
-            }
-
         })
+    }
+
+    override fun onLocalPublisherRemoved(publisher: Publisher) {
+        room?.unpublish(publisher)
+    }
+
+    override fun onRoomReconnecting() {
+        Log.d("CallActivity", "onRoomReconnecting ")
+    }
+
+    override fun onRoomStateChanged(state: RoomState) {
+        Log.d("CallActivity", "onRoomStateChanged " + state.name)
     }
 
     /**
@@ -191,8 +252,11 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver {
      * We need to unsubscribe from their stream, as they will not stream anything anymore
      */
     override fun onRemotePublisherLeft(stream: Stream) {
+        subscribersListView.findViewWithTag<BandyerView>(stream.streamId)?.let {
+            subscribersListView.removeView(it)
+        }
         val subscriber = room!!.getSubscriber(stream) ?: return
-        room!!.unsubscribe(subscriber)
+        room?.unsubscribe(subscriber)
     }
 
     /**
@@ -201,8 +265,8 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver {
      * The publisher will take care of streaming our video and audio feeds to the other participants in the room.
      */
     override fun onRoomEnter() {
-        capturerAV = CapturerAV()
-
+        capturerAV = CapturerAV(this)
+        capturerAV!!.start()
         // Once a publisher has been setup, we must publish its stream in the room.
         // Publishing is an asynchronous process. If something goes wrong while starting the publish process, an error will be set in the error method of the observers.
         // Otherwise if the publish process can be started, any error occurred will be reported
@@ -212,23 +276,13 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver {
                 // .addPublisherObserver()
                 .setCapturer(capturerAV!!)
 
-
-        room!!.publish(this, publisher!!)
+        room?.publish(publisher!!)
 
         // bind the publisher to a view, where the video/audio will be played
-        publisher?.setView(publisherView, object : OnViewStatusListener {
+        publisher?.setView(publisherView, object : OnStreamListener {
 
             override fun onReadyToPlay(stream: Stream) {
                 publisherView.play(stream)
-            }
-
-
-            override fun onFirstFrameRendered() {
-
-            }
-
-            override fun onViewSizeChanged(width: Int, height: Int, rotationDegree: Int) {
-
             }
         })
     }

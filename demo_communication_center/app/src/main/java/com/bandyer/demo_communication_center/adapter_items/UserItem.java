@@ -17,14 +17,14 @@ import java.util.List;
 import butterknife.BindView;
 
 /**
- * A simple RecyclerView item used to display the user name as a cell in the list.
+ * A simple RecyclerView item used to display the user alias as a cell in the list.
  */
 public class UserItem extends AbstractItem<UserItem, UserItem.ViewHolder> {
 
-    public final String name;
+    public final String userAlias;
 
-    public UserItem(String name) {
-        this.name = name;
+    public UserItem(String userAlias) {
+        this.userAlias = userAlias;
     }
 
     @Override
@@ -45,8 +45,8 @@ public class UserItem extends AbstractItem<UserItem, UserItem.ViewHolder> {
 
     protected static class ViewHolder extends ButterKnifeViewHolder<UserItem> {
 
-        @BindView(R.id.user)
-        TextView name;
+        @BindView(R.id.userAlias)
+        TextView userAlias;
 
         ViewHolder(View view) {
             super(view);
@@ -54,12 +54,12 @@ public class UserItem extends AbstractItem<UserItem, UserItem.ViewHolder> {
 
         @Override
         public void bindView(@NonNull UserItem item, @NonNull List<Object> payloads) {
-            name.setText(item.name);
+            userAlias.setText(item.userAlias);
         }
 
         @Override
         public void unbindView(@NonNull UserItem item) {
-            name.setText(null);
+            userAlias.setText(null);
         }
     }
 }

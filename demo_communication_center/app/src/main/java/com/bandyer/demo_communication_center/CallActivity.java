@@ -5,12 +5,14 @@
 
 package com.bandyer.demo_communication_center;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
@@ -22,17 +24,26 @@ import com.bandyer.communication_center.call.Call;
 import com.bandyer.communication_center.call.OnCallEventObserver;
 import com.bandyer.communication_center.call_client.CallClient;
 import com.bandyer.communication_center.call_client.CallException;
+import com.bandyer.core_av.OnStreamListener;
 import com.bandyer.core_av.Stream;
+import com.bandyer.core_av.audiosession.AudioOutputDeviceType;
+import com.bandyer.core_av.audiosession.AudioSession;
+import com.bandyer.core_av.audiosession.AudioSessionListener;
+import com.bandyer.core_av.audiosession.AudioSessionOptions;
 import com.bandyer.core_av.capturer.CapturerAV;
 import com.bandyer.core_av.publisher.Publisher;
 import com.bandyer.core_av.room.Room;
 import com.bandyer.core_av.room.RoomObserver;
+import com.bandyer.core_av.room.RoomState;
 import com.bandyer.core_av.room.RoomToken;
 import com.bandyer.core_av.subscriber.Subscriber;
+import com.bandyer.core_av.utils.proximity_listener.ProximitySensorListener;
 import com.bandyer.core_av.view.BandyerView;
 import com.bandyer.core_av.view.OnViewStatusListener;
 
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -75,6 +86,24 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call);
 
+        // if you want to handle the different audio devices setup the AudioSession
+        AudioSession.getInstance().startWithDefaultOptions(this, new AudioSessionListener() {
+            @Override
+            public void onOutputDeviceConnected(AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
+
+            }
+
+            @Override
+            public void onOutputDeviceAttached(AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
+
+            }
+
+            @Override
+            public void onOutputDeviceDetached(AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
+
+            }
+        });
+
         // Request the current call from the call client
         Call call = CallClient.getInstance().getOngoingCall();
         if (call != null)
@@ -92,17 +121,25 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
      * on Stop leave room
      */
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         // leave room
         if (room != null)
             room.leave();
     }
 
     @Override
+    public void finish() {
+        setResult(Activity.RESULT_OK);
+        // leave room
+        if (room != null)
+            room.leave();
+        super.finish();
+    }
+
+    @Override
     public void onBackPressed() {
-        setResult(RESULT_OK);
-        super.onBackPressed();
+        finish();
     }
 
     @OnClick(R.id.hangup)
@@ -200,28 +237,21 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
 
         // set the view where the stream will be played
         final BandyerView subscriberView = new BandyerView(this);
+        subscriberView.setTag(stream.getStreamId());
+        subscriberView.bringToFront(true);
         int size = getDp(120);
+
+
         // add the view to the view-list of subscribers
         subscribersListView.addView(subscriberView, new LinearLayout.LayoutParams(size, size));
 
         // bind the subscriber to a view, where the video/audio will be played
-        subscriber.setView(subscriberView, new OnViewStatusListener() {
+        subscriber.setView(subscriberView, new OnStreamListener() {
 
             @Override
             public void onReadyToPlay(@NonNull Stream stream) {
                 subscriberView.play(stream);
             }
-
-            @Override
-            public void onFirstFrameRendered() {
-
-            }
-
-            @Override
-            public void onViewSizeChanged(int width, int height, int rotationDegree) {
-
-            }
-
         });
     }
 
@@ -231,6 +261,10 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
      */
     @Override
     public void onRemotePublisherLeft(Stream stream) {
+        View view = subscribersListView.findViewWithTag(stream.getStreamId());
+        if (view != null)
+            subscribersListView.removeView(view);
+
         Subscriber subscriber = room.getSubscriber(stream);
         if (subscriber == null)
             return;
@@ -244,8 +278,8 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
      */
     @Override
     public void onRoomEnter() {
-        capturerAV = new CapturerAV();
-
+        capturerAV = new CapturerAV(this);
+        capturerAV.start();
         // Once a publisher has been setup, we must publish its stream in the room.
         // Publishing is an asynchronous process. If something goes wrong while starting the publish process, an error will be set in the error method of the observers.
         // Otherwise if the publish process can be started, any error occurred will be reported
@@ -255,24 +289,14 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
                 // .addPublisherObserver()
                 .setCapturer(capturerAV);
 
-        room.publish(this, publisher);
+        room.publish(publisher);
 
         // bind the publisher to a view, where the video/audio will be played
-        publisher.setView(publisherView, new OnViewStatusListener() {
+        publisher.setView(publisherView, new OnStreamListener() {
 
             @Override
             public void onReadyToPlay(@NonNull Stream stream) {
                 publisherView.play(stream);
-            }
-
-            @Override
-            public void onFirstFrameRendered() {
-
-            }
-
-            @Override
-            public void onViewSizeChanged(int width, int height, int rotationDegree) {
-
             }
         });
     }
@@ -313,5 +337,20 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
     @Override
     public void onCallStatusChanged(@NotNull Call call, @NotNull Call.Status status) {
         Log.d("CallActivity", "onCallStatusChanged " + status.name());
+    }
+
+    @Override
+    public void onLocalPublisherRemoved(Publisher publisher) {
+        room.unpublish(publisher);
+    }
+
+    @Override
+    public void onRoomReconnecting() {
+        Log.d("CallActivity", "onRoomReconnecting ");
+    }
+
+    @Override
+    public void onRoomStateChanged(RoomState roomState) {
+        Log.d("CallActivity", "onRoomStateChanged " + roomState.name());
     }
 }

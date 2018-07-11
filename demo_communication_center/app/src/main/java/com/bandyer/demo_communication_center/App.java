@@ -39,7 +39,7 @@ public class App extends Application {
         OkHttpClient.Builder client = new OkHttpClient.Builder().addNetworkInterceptor(new StethoInterceptor());
 
         // The sdk needs to me initialized with a builder pattern.
-        // the app_id {@link com.bandyer.demo_communication_center.R#}
+        // the app_id check values/configuration.xml
         CommunicationCenter.Builder commBuilder = new CommunicationCenter.Builder(this, getString(R.string.app_id));
 
 

@@ -49,7 +49,8 @@ public class LoginActivity extends BaseActivity implements OnClickListener<UserI
     private ItemAdapter<UserItem> itemAdapter = new ItemAdapter<>();
     private FastAdapter<UserItem> fastAdapter = FastAdapter.with(itemAdapter);
 
-    private String userName = "";
+    // the userAlias is the identifier of the created user via Bandyer-server restCall see https://docs.bandyer.com/Bandyer-RESTAPI/#create-user
+    private String userAlias = "";
 
     public static void show(Activity context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -82,15 +83,19 @@ public class LoginActivity extends BaseActivity implements OnClickListener<UserI
     @Override
     protected void onResume() {
         super.onResume();
-        userName = LoginManager.getLoggedUser(this);
+
+        // the userAlias is the identifier of the created user via Bandyer-server restCall see https://docs.bandyer.com/Bandyer-RESTAPI/#create-user
+        userAlias = LoginManager.getLoggedUser(this);
 
         // If the user is already logged init the call client and do not fetch the sample users again.
         if (LoginManager.isUserLogged(this)) {
 
             //This statement is needed to initialize the call client, establishing a secure connection with Bandyer platform.
-            CallClient.getInstance().init(userName);
+            CallClient.getInstance().init(userAlias);
             return;
         }
+
+        itemAdapter.clear();
 
         // Fetch the sample users you can use to login with.
         MockedNetwork.getSampleUsers(this, new Callback<BandyerUsers>() {
@@ -101,6 +106,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener<UserI
                     return;
                 }
                 // Add each user to the recyclerView adapter to be displayed in the list.
+
                 for (String user : response.body().user_id_list)
                     itemAdapter.add(new UserItem(user));
             }
@@ -116,14 +122,14 @@ public class LoginActivity extends BaseActivity implements OnClickListener<UserI
 
     /**
      * On click on a user from the list initialize the call client for that user
-     * save the userName to be used for login after the call client has been initialized
+     * save the userAlias to be used for login after the call client has been initialized
      */
     @Override
     public boolean onClick(@Nullable View v, @NonNull IAdapter<UserItem> adapter,
                            @NonNull final UserItem item, int position) {
-        userName = item.name;
+        userAlias = item.userAlias;
         //This statement is needed to initialize the call client, establishing a secure connection with Bandyer platform.
-        CallClient.getInstance().init(userName);
+        CallClient.getInstance().init(userAlias);
         return false;
     }
 
@@ -156,4 +162,13 @@ public class LoginActivity extends BaseActivity implements OnClickListener<UserI
         Log.d("CallClient", "destroyed");
     }
 
+    @Override
+    public void onCallClientReconnecting() {
+        Log.d("CallClient", "onRoomReconnecting");
+    }
+
+    @Override
+    public void onCallClientFailed() {
+        Log.e("CallClient", "onCallClientFailed");
+    }
 }

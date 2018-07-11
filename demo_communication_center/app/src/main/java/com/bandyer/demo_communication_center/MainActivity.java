@@ -96,11 +96,11 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
         else setUpRecyclerView();
 
         // get the user that is currently logged in the sample app
-        String userName = LoginManager.getLoggedUser(this);
+        String userAlias = LoginManager.getLoggedUser(this);
 
         // set a title greeting the logged user
         TextView userGreeting = findViewById(R.id.userGreeting);
-        userGreeting.setText(String.format(getResources().getString(R.string.pick_users), userName));
+        userGreeting.setText(String.format(getResources().getString(R.string.pick_users), userAlias));
 
         // in case the MainActivity has been shown by opening an external link, handle it
         handleExternalUrl(getIntent());
@@ -147,6 +147,8 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
 
         fastAdapter = new FastItemAdapter<>();
         fastAdapter.withSelectable(true);
+
+        fastAdapter.clear();
 
         // Fetch the sample users you can use to login with.
         MockedNetwork.getSampleUsers(this, new Callback<BandyerUsers>() {
@@ -280,4 +282,13 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
         Log.d("CallClient", "destroyed");
     }
 
+    @Override
+    public void onCallClientReconnecting() {
+        Log.d("CallClient", "onCallClientReconnecting");
+    }
+
+    @Override
+    public void onCallClientFailed() {
+        Log.e("CallClient", "onCallClientFailed");
+    }
 }

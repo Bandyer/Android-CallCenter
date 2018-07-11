@@ -74,5 +74,5 @@ dependencies {
     implementation "com.mikepenz:fastadapter-commons:$fastAdapterVersion"
 
     /*** Bandyer Communication Center ***/
-    implementation "com.bandyer:communication_center:1.0.1"
+    implementation "com.bandyer:communication_center:1.0.2"
 }

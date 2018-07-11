@@ -37,8 +37,8 @@ import retrofit2.Response
  */
 class LoginActivity : BaseActivity(), OnClickListener<UserItem>, OnCallClientObserver {
 
-
-    private var userName = ""
+    // the userAlias is the identifier of the created user via Bandyer-server restCall see https://docs.bandyer.com/Bandyer-RESTAPI/#create-user
+    private var userAlias = ""
     private val itemAdapter = ItemAdapter<UserItem>()
     private val fastAdapter = FastAdapter.with<UserItem, ItemAdapter<UserItem>>(itemAdapter)
 
@@ -66,13 +66,18 @@ class LoginActivity : BaseActivity(), OnClickListener<UserItem>, OnCallClientObs
 
     override fun onResume() {
         super.onResume()
-        userName = LoginManager.getLoggedUser(this)
+
+        // the userAlias is the identifier of the created user via Bandyer-server restCall see https://docs.bandyer.com/Bandyer-RESTAPI/#create-user
+        userAlias = LoginManager.getLoggedUser(this)
+
         // If the user is already logged init the call client and do not fetch the sample users again.
         if (LoginManager.isUserLogged(this)) {
             //This statement is needed to initialize the call client, establishing a secure connection with Bandyer platform.
-            CallClient.getInstance().init(userName)
+            CallClient.getInstance().init(userAlias)
             return
         }
+
+        itemAdapter.clear()
 
         // Fetch the sample users you can use to login with.
         MockedNetwork.getSampleUsers(this, object : Callback<BandyerUsers> {
@@ -98,12 +103,12 @@ class LoginActivity : BaseActivity(), OnClickListener<UserItem>, OnCallClientObs
 
     /**
      * On click on a user from the list initialize the call client for that user
-     * save the userName to be used for login after the call client has been initialized
+     * save the userAlias to be used for login after the call client has been initialized
      */
     override fun onClick(v: View?, adapter: IAdapter<UserItem>, item: UserItem, position: Int): Boolean {
-        userName = item.name
+        userAlias = item.userAlias
         //This statement is needed to initialize the call client, establishing a secure connection with Bandyer platform.
-        CallClient.getInstance().init(userName)
+        CallClient.getInstance().init(userAlias)
         return false
     }
 
@@ -130,6 +135,14 @@ class LoginActivity : BaseActivity(), OnClickListener<UserItem>, OnCallClientObs
 
     override fun onCallClientDestroyed() {
         Log.d("CallClient", "destroyed")
+    }
+
+    override fun onCallClientReconnecting() {
+        Log.d("CallClient", "reconnecting")
+    }
+
+    override fun onCallClientFailed() {
+        Log.d("CallClient", "failed")
     }
 
     companion object {
