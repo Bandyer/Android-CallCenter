@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
@@ -20,16 +19,15 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.bandyer.android_audiosession.AudioOutputDeviceType;
+import com.bandyer.android_audiosession.AudioSession;
+import com.bandyer.android_audiosession.audiosession.AudioSessionListener;
 import com.bandyer.communication_center.call.Call;
 import com.bandyer.communication_center.call.OnCallEventObserver;
 import com.bandyer.communication_center.call_client.CallClient;
 import com.bandyer.communication_center.call_client.CallException;
 import com.bandyer.core_av.OnStreamListener;
 import com.bandyer.core_av.Stream;
-import com.bandyer.core_av.audiosession.AudioOutputDeviceType;
-import com.bandyer.core_av.audiosession.AudioSession;
-import com.bandyer.core_av.audiosession.AudioSessionListener;
-import com.bandyer.core_av.audiosession.AudioSessionOptions;
 import com.bandyer.core_av.capturer.CapturerAV;
 import com.bandyer.core_av.publisher.Publisher;
 import com.bandyer.core_av.room.Room;
@@ -37,9 +35,7 @@ import com.bandyer.core_av.room.RoomObserver;
 import com.bandyer.core_av.room.RoomState;
 import com.bandyer.core_av.room.RoomToken;
 import com.bandyer.core_av.subscriber.Subscriber;
-import com.bandyer.core_av.utils.proximity_listener.ProximitySensorListener;
 import com.bandyer.core_av.view.BandyerView;
-import com.bandyer.core_av.view.OnViewStatusListener;
 
 import org.jetbrains.annotations.NotNull;
 

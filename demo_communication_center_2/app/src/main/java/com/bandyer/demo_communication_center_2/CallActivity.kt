@@ -17,16 +17,18 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import com.bandyer.android_audiosession.AudioOutputDeviceType
+import com.bandyer.android_audiosession.AudioSession
+import com.bandyer.android_audiosession.AudioSessionOptions
+import com.bandyer.android_audiosession.audiosession.AudioSessionListener
+import com.bandyer.android_common.proximity_listener.ProximitySensor
+import com.bandyer.android_common.proximity_listener.ProximitySensorListener
 import com.bandyer.communication_center.call.Call
 import com.bandyer.communication_center.call.OnCallEventObserver
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.communication_center.call_client.CallException
 import com.bandyer.core_av.OnStreamListener
 import com.bandyer.core_av.Stream
-import com.bandyer.core_av.audiosession.AudioOutputDeviceType
-import com.bandyer.core_av.audiosession.AudioSession
-import com.bandyer.core_av.audiosession.AudioSessionListener
-import com.bandyer.core_av.audiosession.AudioSessionOptions
 import com.bandyer.core_av.capturer.CapturerAV
 import com.bandyer.core_av.publisher.Publisher
 import com.bandyer.core_av.room.Room
@@ -34,11 +36,7 @@ import com.bandyer.core_av.room.RoomObserver
 import com.bandyer.core_av.room.RoomState
 import com.bandyer.core_av.room.RoomToken
 import com.bandyer.core_av.subscriber.Subscriber
-import com.bandyer.core_av.utils.proximity_listener.ProximitySensor
-import com.bandyer.core_av.utils.proximity_listener.ProximitySensorListener
 import com.bandyer.core_av.view.BandyerView
-import com.bandyer.core_av.view.OnViewStatusListener
-import com.bandyer.demo_communication_center_2.R.id.*
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.android.synthetic.main.activity_call_actions.*
 

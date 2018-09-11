@@ -8,11 +8,11 @@ package com.bandyer.demo_communication_center;
 import android.app.Application;
 import android.util.Log;
 
+import com.bandyer.android_common.logging.BaseLogger;
+import com.bandyer.android_common.logging.NetworkLogger;
 import com.bandyer.communication_center.CommunicationCenter;
 import com.bandyer.communication_center.Environment;
 import com.bandyer.communication_center.utils.logging.CommCenterLogger;
-import com.bandyer.core_av.utils.logging.BaseLogger;
-import com.bandyer.core_av.utils.logging.NetworkLogger;
 import com.bandyer.demo_communication_center.utils.StethoReporter;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
