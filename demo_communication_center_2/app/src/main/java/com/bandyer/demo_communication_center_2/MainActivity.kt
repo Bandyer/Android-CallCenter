@@ -15,9 +15,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.bandyer.communication_center.call.Call
+import com.bandyer.communication_center.call.CallOptions
 import com.bandyer.communication_center.call.IncomingCall
 import com.bandyer.communication_center.call.OnCallCreationObserver
 import com.bandyer.communication_center.call_client.*
+import com.bandyer.communication_center.call.CallType
 import com.bandyer.demo_communication_center_2.adapter_items.UserSelectionItem
 import com.bandyer.demo_communication_center_2.utils.LoginManager
 import com.bandyer.demo_communication_center_2.utils.networking.BandyerUsers
@@ -151,7 +153,7 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
      */
     fun call() {
         Log.d("MainActivity", "Call!!!!!!")
-        CallClient.getInstance().call(calleeSelected!!, this)
+        CallClient.getInstance().call(calleeSelected!!, CallOptions(false, 0, CallType.AUDIO_VIDEO), this)
     }
 
     /**

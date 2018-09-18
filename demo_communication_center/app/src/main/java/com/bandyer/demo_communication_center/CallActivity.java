@@ -23,12 +23,18 @@ import com.bandyer.android_audiosession.AudioOutputDeviceType;
 import com.bandyer.android_audiosession.AudioSession;
 import com.bandyer.android_audiosession.audiosession.AudioSessionListener;
 import com.bandyer.communication_center.call.Call;
+import com.bandyer.communication_center.call.CallOptions;
+import com.bandyer.communication_center.call.CallType;
 import com.bandyer.communication_center.call.OnCallEventObserver;
+import com.bandyer.communication_center.call.participant.CallParticipant;
 import com.bandyer.communication_center.call_client.CallClient;
 import com.bandyer.communication_center.call_client.CallException;
+import com.bandyer.communication_center.call_client.CallUpgradeException;
 import com.bandyer.core_av.OnStreamListener;
 import com.bandyer.core_av.Stream;
+import com.bandyer.core_av.capturer.AbstractBaseCapturer;
 import com.bandyer.core_av.capturer.CapturerAV;
+import com.bandyer.core_av.capturer.audio.CapturerAudio;
 import com.bandyer.core_av.publisher.Publisher;
 import com.bandyer.core_av.room.Room;
 import com.bandyer.core_av.room.RoomObserver;
@@ -36,8 +42,6 @@ import com.bandyer.core_av.room.RoomState;
 import com.bandyer.core_av.room.RoomToken;
 import com.bandyer.core_av.subscriber.Subscriber;
 import com.bandyer.core_av.view.BandyerView;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -68,6 +72,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
 
     private Room room;
     private CapturerAV capturerAV;
+    private CapturerAudio capturerAudio;
     private Publisher publisher;
     private boolean isVolumeMuted = false;
 
@@ -85,17 +90,17 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
         // if you want to handle the different audio devices setup the AudioSession
         AudioSession.getInstance().startWithDefaultOptions(this, new AudioSessionListener() {
             @Override
-            public void onOutputDeviceConnected(AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
+            public void onOutputDeviceConnected(@NonNull AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
 
             }
 
             @Override
-            public void onOutputDeviceAttached(AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
+            public void onOutputDeviceAttached(@NonNull AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
 
             }
 
             @Override
-            public void onOutputDeviceDetached(AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
+            public void onOutputDeviceDetached(@NonNull AudioOutputDeviceType audioOutputDeviceType, AudioOutputDeviceType audioOutputDeviceType1, List<? extends AudioOutputDeviceType> list) {
 
             }
         });
@@ -104,6 +109,13 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
         Call call = CallClient.getInstance().getOngoingCall();
         if (call != null)
             call.addEventObserver(this);
+
+        FloatingActionButton camera = findViewById(R.id.toggle_camera_off);
+
+        boolean userCanVideoCall = CallClient.getInstance().getSessionUser().getCanVideo();
+        CallOptions callOptions = CallClient.getInstance().getOngoingCall().getOptions();
+
+        setVideoCameraDrawable(camera, userCanVideoCall && callOptions != null && callOptions.getCallType() == CallType.AUDIO_VIDEO);
 
         String token = getIntent().getStringExtra(ROOM_TOKEN);
         // Once we have the token we will start joining the virtual room.
@@ -175,8 +187,18 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
         if (capturerAV == null || publisher == null || publisher.getStream() == null)
             return;
 
-        capturerAV.setVideoEnabled(!capturerAV.isVideoEnabled());
-        int color = capturerAV.isVideoEnabled() ? Color.WHITE : ContextCompat.getColor(this, R.color.colorAccent);
+        boolean canVideo = CallClient.getInstance().getSessionUser().getCanVideo();
+        capturerAV.setVideoEnabled(!capturerAV.isVideoEnabled() && canVideo);
+
+        CallOptions callOptions = CallClient.getInstance().getOngoingCall().getOptions();
+        if (callOptions != null && callOptions.getCallType() == CallType.AUDIO_UPGRADABLE && canVideo)
+            CallClient.getInstance().getOngoingCall().upgradeCallType();
+
+        setVideoCameraDrawable(view, capturerAV != null && capturerAV.isVideoEnabled());
+    }
+
+    private void setVideoCameraDrawable(FloatingActionButton view, Boolean enable) {
+        int color = enable ? Color.WHITE : ContextCompat.getColor(this, R.color.colorAccent);
         DrawableCompat.setTint(view.getDrawable(), color);
     }
 
@@ -274,8 +296,18 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
      */
     @Override
     public void onRoomEnter() {
-        capturerAV = new CapturerAV(this);
-        capturerAV.start();
+        CallType callType = CallClient.getInstance().getOngoingCall().getOptions().getCallType();
+        AbstractBaseCapturer capturer;
+        if (callType == CallType.AUDIO_ONLY) {
+            capturerAudio = new CapturerAudio(this);
+            capturer = capturerAudio;
+        } else {
+            capturerAV = new CapturerAV(this);
+            capturerAV.setVideoEnabled(callType == CallType.AUDIO_VIDEO && CallClient.getInstance().getSessionUser().getCanVideo());
+            capturer = capturerAV;
+        }
+
+        capturer.start();
         // Once a publisher has been setup, we must publish its stream in the room.
         // Publishing is an asynchronous process. If something goes wrong while starting the publish process, an error will be set in the error method of the observers.
         // Otherwise if the publish process can be started, any error occurred will be reported
@@ -283,7 +315,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
 
         publisher = new Publisher(CallClient.getInstance().getSessionUser())
                 // .addPublisherObserver()
-                .setCapturer(capturerAV);
+                .setCapturer(capturer);
 
         room.publish(publisher);
 
@@ -314,29 +346,38 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
 
 
     @Override
-    public void onCallStarted(@NotNull Call call, @NotNull RoomToken roomToken) {
+    public void onCallStarted(@NonNull Call call, @NonNull RoomToken roomToken) {
         Log.d("CallActivity", "onCallStarted " + roomToken);
     }
 
     @Override
-    public void onCallEnded(@NotNull Call call, @NotNull Call.EndReason callEndReason) {
+    public void onCallEnded(@NonNull Call call, @NonNull Call.EndReason callEndReason) {
         Log.d("CallActivity", "onCallEnded " + callEndReason);
         CallActivity.this.onBackPressed();
     }
 
     @Override
-    public void onCallError(@NotNull Call call, @NotNull CallException reason) {
+    public void onCallError(@NonNull Call call, @NonNull CallException reason) {
         Log.e("CallActivity", "onCallError " + reason);
-        CallActivity.this.onBackPressed();
+        showErrorDialog(reason.getMessage());
+        if (!(reason instanceof CallUpgradeException))
+            onBackPressed();
     }
 
     @Override
-    public void onCallStatusChanged(@NotNull Call call, @NotNull Call.Status status) {
+    public void onCallStatusChanged(@NonNull Call call, @NonNull Call.Status status) {
         Log.d("CallActivity", "onCallStatusChanged " + status.name());
     }
 
     @Override
-    public void onLocalPublisherRemoved(Publisher publisher) {
+    public void onCallUpgraded(@NonNull CallParticipant callParticipant, @NonNull CallType callType) {
+        Log.d("CallActivity", "onCallUpgraded " + callType.name());
+        if (callParticipant.getUser().getUserAlias().equals(publisher.getRoomUser().getUserAlias()) && capturerAV != null)
+            capturerAV.setVideoEnabled(callType == CallType.AUDIO_VIDEO);
+    }
+
+    @Override
+    public void onLocalPublisherRemoved(@NonNull Publisher publisher) {
         room.unpublish(publisher);
     }
 
@@ -346,7 +387,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
     }
 
     @Override
-    public void onRoomStateChanged(RoomState roomState) {
+    public void onRoomStateChanged(@NonNull RoomState roomState) {
         Log.d("CallActivity", "onRoomStateChanged " + roomState.name());
     }
 }

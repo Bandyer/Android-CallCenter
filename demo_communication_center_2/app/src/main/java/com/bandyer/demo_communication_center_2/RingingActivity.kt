@@ -20,6 +20,9 @@ import com.bandyer.communication_center.call.participant.CallParticipant
 import com.bandyer.communication_center.call.participant.OnCallParticipantObserver
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.communication_center.call_client.CallException
+import com.bandyer.communication_center.call_client.CallUpgradeException
+import com.bandyer.communication_center.call_client.User
+import com.bandyer.communication_center.call.CallType
 import com.bandyer.core_av.room.RoomToken
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_ringing.*
@@ -111,9 +114,15 @@ class RingingActivity : BaseActivity(), OnCallEventObserver {
         super.onBackPressed()
     }
 
+    override fun onCallUpgraded(participant: CallParticipant, callType: CallType) {
+        Log.d("RingingActivity", "onCallUpgraded ${participant.user}")
+    }
+
     override fun onCallError(call: Call, reason: CallException) {
         Log.e("RingingActivity", "onCallError " + reason.message)
-        onBackPressed()
+        showErrorDialog("${reason.message}")
+        if (reason !is CallUpgradeException)
+            onBackPressed()
     }
 
     override fun onCallStatusChanged(call: Call, status: Call.Status) {

@@ -25,10 +25,10 @@ import com.bandyer.communication_center.call.participant.CallParticipant;
 import com.bandyer.communication_center.call.participant.OnCallParticipantObserver;
 import com.bandyer.communication_center.call_client.CallClient;
 import com.bandyer.communication_center.call_client.CallException;
+import com.bandyer.communication_center.call_client.CallUpgradeException;
+import com.bandyer.communication_center.call.CallType;
 import com.bandyer.core_av.room.RoomToken;
 import com.squareup.picasso.Picasso;
-
-import org.jetbrains.annotations.NotNull;
 
 import butterknife.BindView;
 import butterknife.OnClick;
@@ -83,7 +83,7 @@ public class RingingActivity extends BaseActivity implements OnCallEventObserver
         // Once we are subscribed, we will be notified anytime a participant status changes
         call.getParticipants().addObserver(new OnCallParticipantObserver() {
             @Override
-            public void onCallParticipantStatusChanged(@NotNull CallParticipant participant) {
+            public void onCallParticipantStatusChanged(@NonNull CallParticipant participant) {
                 Snackbar.make(toolbar.getRootView(), participant.getStatus().name(), Snackbar.LENGTH_LONG).show();
             }
         });
@@ -131,20 +131,25 @@ public class RingingActivity extends BaseActivity implements OnCallEventObserver
      * The roomToken will be used in the other activity to set up the room.
      */
     @Override
-    public void onCallStarted(@NotNull Call call, @NotNull RoomToken roomToken) {
+    public void onCallStarted(@NonNull Call call, @NonNull RoomToken roomToken) {
         this.roomToken = roomToken;
         // this will call the method showCallActivity if permissions are granted
         RingingActivityPermissionsDispatcher.showCallActivityWithPermissionCheck(RingingActivity.this);
     }
 
     @Override
-    public void onCallEnded(@NotNull Call call, @NotNull Call.EndReason callEndReason) {
+    public void onCallUpgraded(@NonNull CallParticipant callParticipant, @NonNull CallType callType) {
+        Log.d("RingingActivity", "onCallUpgraded " + callType.name());
+    }
+
+    @Override
+    public void onCallEnded(@NonNull Call call, @NonNull Call.EndReason callEndReason) {
         Log.d("RingingActivity", "onCallEnded " + callEndReason.name());
         onBackPressed();
     }
 
     @Override
-    public void onCallStatusChanged(@NotNull Call call, @NotNull Call.Status status) {
+    public void onCallStatusChanged(@NonNull Call call, @NonNull Call.Status status) {
         Log.d("RingingActivity", "onCallStatusChanged " + status.name());
     }
 
@@ -159,9 +164,11 @@ public class RingingActivity extends BaseActivity implements OnCallEventObserver
     }
 
     @Override
-    public void onCallError(@NotNull Call call, @NotNull CallException reason) {
+    public void onCallError(@NonNull Call call, @NonNull CallException reason) {
         Log.e("RingingActivity", "onCallError" + reason.getMessage());
-        onBackPressed();
+        showErrorDialog(reason.getMessage());
+        if (!(reason instanceof CallUpgradeException))
+            onBackPressed();
     }
 
     /************************************Permissions Requests **************************************

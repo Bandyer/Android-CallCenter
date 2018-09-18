@@ -19,6 +19,9 @@ import com.bandyer.communication_center.call.participant.CallParticipant
 import com.bandyer.communication_center.call.participant.OnCallParticipantObserver
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.communication_center.call_client.CallException
+import com.bandyer.communication_center.call_client.CallUpgradeException
+import com.bandyer.communication_center.call_client.User
+import com.bandyer.communication_center.call.CallType
 import com.bandyer.core_av.room.RoomToken
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_dialing.*
@@ -97,6 +100,10 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
         showCallActivityWithPermissionCheck()
     }
 
+    override fun onCallUpgraded(participant: CallParticipant, callType: CallType) {
+        Log.d("DialingActivity", "onCallUpgraded ${participant.user}")
+    }
+
     override fun onCallEnded(call: Call, callEndReason: Call.EndReason) {
         Log.d("DialingActivity", "onCallEnded " + callEndReason.name)
         onBackPressed()
@@ -110,6 +117,8 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
         Log.e("DialingActivity", "onCallError $reason")
         // If an error has occurred with the creation of the call show error dialog
         showErrorDialog("${reason.message}")
+        if (reason !is CallUpgradeException)
+            onBackPressed()
     }
 
     /************************************Permissions Requests **************************************

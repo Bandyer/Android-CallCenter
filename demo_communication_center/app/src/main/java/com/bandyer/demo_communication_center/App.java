@@ -6,6 +6,7 @@
 package com.bandyer.demo_communication_center;
 
 import android.app.Application;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.bandyer.android_common.logging.BaseLogger;
@@ -18,8 +19,6 @@ import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.GsonBuilder;
 import com.squareup.leakcanary.LeakCanary;
-
-import org.jetbrains.annotations.NotNull;
 
 import okhttp3.OkHttpClient;
 
@@ -55,31 +54,31 @@ public class App extends Application {
                         private StethoReporter stethoReporter = new StethoReporter();
 
                         @Override
-                        public void onConnected(String tag, String url) {
+                        public void onConnected(@NonNull String tag, @NonNull String url) {
                             Log.d(tag, "onConnected " + url);
                             stethoReporter.onCreated(url);
                         }
 
                         @Override
-                        public void onMessageReceived(String tag, String response) {
+                        public void onMessageReceived(@NonNull String tag, @NonNull String response) {
                             Log.d(tag, "onMessageReceived " + response);
                             stethoReporter.onReceive(response);
                         }
 
                         @Override
-                        public void onMessageSent(String tag, String request) {
+                        public void onMessageSent(@NonNull String tag, @NonNull String request) {
                             Log.d(tag, "onMessageSent " + request);
                             stethoReporter.onSend(request);
                         }
 
                         @Override
-                        public void onError(String tag, String reason) {
+                        public void onError(@NonNull String tag, @NonNull String reason) {
                             Log.e(tag, "connection error " + reason);
                             stethoReporter.onError(reason);
                         }
 
                         @Override
-                        public void onDisconnected(String tag) {
+                        public void onDisconnected(@NonNull String tag) {
                             Log.d(tag, "onDisconnected");
                             stethoReporter.onClosed();
                         }
@@ -94,27 +93,27 @@ public class App extends Application {
                         }
 
                         @Override
-                        public void verbose(@NotNull String tag, @NotNull String message) {
+                        public void verbose(@NonNull String tag, @NonNull String message) {
                             Log.v(tag, message);
                         }
 
                         @Override
-                        public void debug(@NotNull String tag, @NotNull String message) {
+                        public void debug(@NonNull String tag, @NonNull String message) {
                             Log.d(tag, message);
                         }
 
                         @Override
-                        public void info(@NotNull String tag, @NotNull String message) {
+                        public void info(@NonNull String tag, @NonNull String message) {
                             Log.i(tag, message);
                         }
 
                         @Override
-                        public void warn(@NotNull String tag, @NotNull String message) {
+                        public void warn(@NonNull String tag, @NonNull String message) {
                             Log.w(tag, message);
                         }
 
                         @Override
-                        public void error(@NotNull String tag, @NotNull String message) {
+                        public void error(@NonNull String tag, @NonNull String message) {
                             Log.e(tag, message);
                         }
                     });

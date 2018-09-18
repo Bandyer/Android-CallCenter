@@ -27,9 +27,15 @@ import com.bandyer.communication_center.call.Call
 import com.bandyer.communication_center.call.OnCallEventObserver
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.communication_center.call_client.CallException
+import com.bandyer.communication_center.call_client.CallUpgradeException
+import com.bandyer.communication_center.call_client.User
+import com.bandyer.communication_center.call.CallType
+import com.bandyer.communication_center.call.participant.CallParticipant
 import com.bandyer.core_av.OnStreamListener
 import com.bandyer.core_av.Stream
+import com.bandyer.core_av.capturer.AbstractBaseCapturer
 import com.bandyer.core_av.capturer.CapturerAV
+import com.bandyer.core_av.capturer.audio.CapturerAudio
 import com.bandyer.core_av.publisher.Publisher
 import com.bandyer.core_av.room.Room
 import com.bandyer.core_av.room.RoomObserver
@@ -37,6 +43,7 @@ import com.bandyer.core_av.room.RoomState
 import com.bandyer.core_av.room.RoomToken
 import com.bandyer.core_av.subscriber.Subscriber
 import com.bandyer.core_av.view.BandyerView
+import com.bandyer.demo_communication_center_2.R.id.*
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.android.synthetic.main.activity_call_actions.*
 
@@ -59,10 +66,10 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
     private var room: Room? = null
 
     private var capturerAV: CapturerAV? = null
+    private var capturerAudio: CapturerAudio? = null
     private var publisher: Publisher? = null
     private var isVolumeMuted = false
-
-    var snackbar: Snackbar? = null
+    private var snackbar: Snackbar? = null
 
     override fun onProximitySensorChanged(isNear: Boolean) {
         Log.e("CallActivity", "sensor $isNear")
@@ -133,9 +140,12 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
          */
         toggle_camera_off.setOnClickListener {
             it as FloatingActionButton
-            capturerAV?.setVideoEnabled(capturerAV?.isVideoEnabled != true)
-            val color = if (capturerAV?.isVideoEnabled == true) Color.WHITE else ContextCompat.getColor(this, R.color.colorAccent)
-            DrawableCompat.setTint(it.drawable, color)
+            val canVideo = CallClient.getInstance().sessionUser?.canVideo == true
+            capturerAV?.setVideoEnabled(capturerAV?.isVideoEnabled != true && canVideo)
+            if (CallClient.getInstance().ongoingCall?.options?.callType == CallType.AUDIO_UPGRADABLE && canVideo)
+                CallClient.getInstance().ongoingCall?.upgradeCallType()
+
+            setVideoCameraDrawable(capturerAV?.isVideoEnabled == true)
         }
 
         /**
@@ -165,6 +175,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
 
         // Request the current call from the call client
         CallClient.getInstance().ongoingCall!!.addEventObserver(this)
+        setVideoCameraDrawable(CallClient.getInstance().sessionUser!!.canVideo && CallClient.getInstance().ongoingCall!!.options?.callType == CallType.AUDIO_VIDEO)
 
         val token = intent.getStringExtra(ROOM_TOKEN)
         // Once we have the token we will start joining the virtual room.
@@ -172,6 +183,11 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         room = Room(RoomToken(token))
         room?.addRoomObserver(this)
         room?.join()
+    }
+
+    private fun setVideoCameraDrawable(enabled: Boolean) {
+        val color = if (enabled) Color.WHITE else ContextCompat.getColor(this, R.color.colorAccent)
+        DrawableCompat.setTint(toggle_camera_off.drawable, color)
     }
 
     override fun onPause() {
@@ -263,8 +279,18 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
      * The publisher will take care of streaming our video and audio feeds to the other participants in the room.
      */
     override fun onRoomEnter() {
-        capturerAV = CapturerAV(this)
-        capturerAV!!.start()
+        val callType = CallClient.getInstance().ongoingCall?.options?.callType
+        val capturer: AbstractBaseCapturer<*> = if (callType == CallType.AUDIO_ONLY) {
+            capturerAudio = CapturerAudio(this)
+            capturerAudio!!
+        } else {
+            capturerAV = CapturerAV(this).apply {
+                setVideoEnabled(callType == CallType.AUDIO_VIDEO && CallClient.getInstance().sessionUser?.canVideo == true)
+            }
+            capturerAV!!
+        }
+
+        capturer.start()
         // Once a publisher has been setup, we must publish its stream in the room.
         // Publishing is an asynchronous process. If something goes wrong while starting the publish process, an error will be set in the error method of the observers.
         // Otherwise if the publish process can be started, any error occurred will be reported
@@ -272,7 +298,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
 
         publisher = Publisher(CallClient.getInstance().sessionUser!!)
                 // .addPublisherObserver()
-                .setCapturer(capturerAV!!)
+                .setCapturer(capturer)
 
         room?.publish(publisher!!)
 
@@ -298,6 +324,12 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         onBackPressed()
     }
 
+    override fun onCallUpgraded(participant: CallParticipant, callType: CallType) {
+        Log.d("CallActivity", "onCallUpgraded $participant sessionUser = ${CallClient.getInstance().sessionUser}")
+        if (participant.user.userAlias == publisher?.roomUser?.userAlias)
+            capturerAV?.setVideoEnabled(callType == CallType.AUDIO_VIDEO)
+    }
+
     override fun onCallStarted(call: Call, roomToken: RoomToken) {
         Log.d("CallActivity", "onCallStarted $roomToken")
     }
@@ -309,7 +341,9 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
 
     override fun onCallError(call: Call, reason: CallException) {
         Log.e("CallActivity", "onCallError $reason")
-        onBackPressed()
+        showErrorDialog("${reason.message}")
+        if (reason !is CallUpgradeException)
+            onBackPressed()
     }
 
     override fun onCallStatusChanged(call: Call, status: Call.Status) {

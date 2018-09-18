@@ -22,6 +22,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bandyer.communication_center.call.Call;
+import com.bandyer.communication_center.call.CallOptions;
+import com.bandyer.communication_center.call.CallType;
 import com.bandyer.communication_center.call.IncomingCall;
 import com.bandyer.communication_center.call.OnCallCreationObserver;
 import com.bandyer.communication_center.call_client.CallClient;
@@ -38,8 +40,6 @@ import com.mikepenz.fastadapter.IAdapter;
 import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter;
 import com.mikepenz.fastadapter.listeners.OnClickListener;
 import com.mikepenz.fastadapter.select.SelectExtension;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -199,7 +199,7 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
      * If you do implement the observer anonymously the methods may not be called.
      */
     private void call() {
-        CallClient.getInstance().call(calleeSelected, this);
+        CallClient.getInstance().call(calleeSelected, new CallOptions(false, 0, CallType.AUDIO_VIDEO), this);
     }
 
     /**
@@ -234,7 +234,7 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
     /////////////////////////////////// CALL INCOMING //////////////////////////////////////////////
 
     @Override
-    public void onIncomingCall(@NotNull IncomingCall call) {
+    public void onIncomingCall(@NonNull IncomingCall call) {
         // We have received an incoming call, let's show an activity to notify the user.
         RingingActivity.show(this);
     }
@@ -242,13 +242,13 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
     //////////////////////////////////// CALL CREATED //////////////////////////////////////////////
 
     @Override
-    public void onCallCreationSuccess(@NotNull Call call) {
+    public void onCallCreationSuccess(@NonNull Call call) {
         // We have create an outgoing call, let's show an activity to notify the user.
         DialingActivity.show(MainActivity.this);
     }
 
     @Override
-    public void onCallCreationError(@NotNull CallException reason) {
+    public void onCallCreationError(@NonNull CallException reason) {
         Log.e("onCallCreationError", "onCallCreationError" + reason.getMessage());
         // If an error has occurred with the creation of the call show error dialog
         showErrorDialog(reason.getMessage());
@@ -259,7 +259,7 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
      * In all other cases, the call client should have been already initialized in the connection phase with our Bandyer platform.
      **********************************************************************************************/
     @Override
-    public void onCallClientInitialized(@NotNull User sessionUser) {
+    public void onCallClientInitialized(@NonNull User sessionUser) {
         Log.d("CallClient", "init" + sessionUser);
         shouldOpenExternalUrl = false; // reset boolean to avoid reopening external url twice on resume
         CallClient.getInstance().join(joinUrl, MainActivity.this);
