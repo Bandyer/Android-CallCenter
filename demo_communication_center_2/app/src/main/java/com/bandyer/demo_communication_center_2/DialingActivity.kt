@@ -57,6 +57,10 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
             override fun onCallParticipantStatusChanged(participant: CallParticipant) {
                 Snackbar.make(callee, participant.status.name, Snackbar.LENGTH_LONG).show()
             }
+
+            override fun onCallParticipantUpgradedCallType(participant: CallParticipant, callType: CallType) {
+                Log.d("DialingActivity", "onCallUpgraded ${participant.user}")
+            }
         })
 
         val numberOfUsers = call!!.participants.callees!!.size
@@ -100,8 +104,8 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
         showCallActivityWithPermissionCheck()
     }
 
-    override fun onCallUpgraded(participant: CallParticipant, callType: CallType) {
-        Log.d("DialingActivity", "onCallUpgraded ${participant.user}")
+    override fun onCallUpgraded() {
+        Log.d("DialingActivity", "onCallUpgraded")
     }
 
     override fun onCallEnded(call: Call, callEndReason: Call.EndReason) {

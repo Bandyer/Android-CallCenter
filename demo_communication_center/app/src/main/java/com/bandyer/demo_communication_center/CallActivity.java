@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
@@ -27,6 +28,7 @@ import com.bandyer.communication_center.call.CallOptions;
 import com.bandyer.communication_center.call.CallType;
 import com.bandyer.communication_center.call.OnCallEventObserver;
 import com.bandyer.communication_center.call.participant.CallParticipant;
+import com.bandyer.communication_center.call.participant.OnCallParticipantObserver;
 import com.bandyer.communication_center.call_client.CallClient;
 import com.bandyer.communication_center.call_client.CallException;
 import com.bandyer.communication_center.call_client.CallUpgradeException;
@@ -36,12 +38,15 @@ import com.bandyer.core_av.capturer.AbstractBaseCapturer;
 import com.bandyer.core_av.capturer.CapturerAV;
 import com.bandyer.core_av.capturer.audio.CapturerAudio;
 import com.bandyer.core_av.publisher.Publisher;
+import com.bandyer.core_av.publisher.RecordingException;
+import com.bandyer.core_av.publisher.RecordingListener;
 import com.bandyer.core_av.room.Room;
 import com.bandyer.core_av.room.RoomObserver;
 import com.bandyer.core_av.room.RoomState;
 import com.bandyer.core_av.room.RoomToken;
 import com.bandyer.core_av.subscriber.Subscriber;
 import com.bandyer.core_av.view.BandyerView;
+import com.bandyer.core_av.view.StreamView;
 
 import java.util.List;
 
@@ -237,6 +242,31 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
     }
 
     /**
+     * When the created publisher has been added to the room this method will be invoked.
+     * <p>
+     * Here is a good place where we can request to record our video which we are publishing.
+     *
+     * @param publisher Publisher
+     */
+    @Override
+    public void onLocalPublisherJoined(@NonNull Publisher publisher) {
+        Call call = CallClient.getInstance().getOngoingCall();
+        if (call != null && call.getOptions() != null && call.getOptions().getRecord()) {
+            publisher.startRecording(new RecordingListener() {
+                @Override
+                public void onSuccess(@NonNull String recordId, boolean isRecording) {
+                    Snackbar.make(publisherView, "Recording has been started", Snackbar.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onError(@org.jetbrains.annotations.Nullable String recordId, boolean isRecording, @NonNull RecordingException reason) {
+                    Snackbar.make(publisherView, "Recording error" + reason.getLocalizedMessage(), Snackbar.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    /**
      * When a new stream is added to the room this method will be invoked.
      * Here we have the chance to subscribe to the stream just added.
      * If a remote stream is added to the room we subscribe to it, creating a subscriber object that is responsible for handling the process
@@ -248,7 +278,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
      * will be reported to the observers registered on the subscriber object.
      */
     @Override
-    public void onRemotePublisherJoined(Stream stream) {
+    public void onRemotePublisherJoined(@NonNull Stream stream) {
         final Subscriber subscriber = new Subscriber(stream);
         //subscriber.addSubscribeObserver();
         room.subscribe(subscriber);
@@ -267,8 +297,8 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
         subscriber.setView(subscriberView, new OnStreamListener() {
 
             @Override
-            public void onReadyToPlay(@NonNull Stream stream) {
-                subscriberView.play(stream);
+            public void onReadyToPlay(@NonNull StreamView view, @NonNull Stream stream) {
+                view.play(stream);
             }
         });
     }
@@ -278,7 +308,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
      * We need to unsubscribe from their stream, as they will not stream anything anymore
      */
     @Override
-    public void onRemotePublisherLeft(Stream stream) {
+    public void onRemotePublisherLeft(@NonNull Stream stream) {
         View view = subscribersListView.findViewWithTag(stream.getStreamId());
         if (view != null)
             subscribersListView.removeView(view);
@@ -296,8 +326,9 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
      */
     @Override
     public void onRoomEnter() {
-        CallType callType = CallClient.getInstance().getOngoingCall().getOptions().getCallType();
-        AbstractBaseCapturer capturer;
+        Call call = CallClient.getInstance().getOngoingCall();
+        CallType callType = call.getOptions().getCallType();
+        final AbstractBaseCapturer capturer;
         if (callType == CallType.AUDIO_ONLY) {
             capturerAudio = new CapturerAudio(this);
             capturer = capturerAudio;
@@ -308,6 +339,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
         }
 
         capturer.start();
+
         // Once a publisher has been setup, we must publish its stream in the room.
         // Publishing is an asynchronous process. If something goes wrong while starting the publish process, an error will be set in the error method of the observers.
         // Otherwise if the publish process can be started, any error occurred will be reported
@@ -321,10 +353,26 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
 
         // bind the publisher to a view, where the video/audio will be played
         publisher.setView(publisherView, new OnStreamListener() {
+            @Override
+            public void onReadyToPlay(@NonNull StreamView view, @NonNull Stream stream) {
+                view.play(stream);
+            }
+        });
+
+
+        // This statement is needed to subscribe as a participant observer.
+        // Once we are subscribed, we will be notified anytime a participant status changes
+        call.getParticipants().addObserver(new OnCallParticipantObserver() {
+            @Override
+            public void onCallParticipantStatusChanged(@NonNull CallParticipant participant) {
+                Snackbar.make(publisherView, participant.getStatus().name(), Snackbar.LENGTH_LONG).show();
+            }
 
             @Override
-            public void onReadyToPlay(@NonNull Stream stream) {
-                publisherView.play(stream);
+            public void onCallParticipantUpgradedCallType(@NonNull CallParticipant participant, @NonNull CallType callType) {
+                Log.d("CallActivity", "onCallParticipantUpgradedCallType participant = " + participant.getUser().getUserAlias());
+                if (participant.getUser().getUserAlias().equals(publisher.getRoomUser().getUserAlias()) && capturerAV != null)
+                    capturerAV.setVideoEnabled(callType == CallType.AUDIO_VIDEO);
             }
         });
     }
@@ -370,10 +418,8 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
     }
 
     @Override
-    public void onCallUpgraded(@NonNull CallParticipant callParticipant, @NonNull CallType callType) {
-        Log.d("CallActivity", "onCallUpgraded " + callType.name());
-        if (callParticipant.getUser().getUserAlias().equals(publisher.getRoomUser().getUserAlias()) && capturerAV != null)
-            capturerAV.setVideoEnabled(callType == CallType.AUDIO_VIDEO);
+    public void onCallUpgraded() {
+        Log.d("CallActivity", "onCallUpgraded");
     }
 
     @Override

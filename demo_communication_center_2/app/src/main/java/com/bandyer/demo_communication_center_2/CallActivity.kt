@@ -24,28 +24,31 @@ import com.bandyer.android_audiosession.audiosession.AudioSessionListener
 import com.bandyer.android_common.proximity_listener.ProximitySensor
 import com.bandyer.android_common.proximity_listener.ProximitySensorListener
 import com.bandyer.communication_center.call.Call
+import com.bandyer.communication_center.call.CallType
 import com.bandyer.communication_center.call.OnCallEventObserver
+import com.bandyer.communication_center.call.participant.CallParticipant
+import com.bandyer.communication_center.call.participant.OnCallParticipantObserver
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.communication_center.call_client.CallException
 import com.bandyer.communication_center.call_client.CallUpgradeException
-import com.bandyer.communication_center.call_client.User
-import com.bandyer.communication_center.call.CallType
-import com.bandyer.communication_center.call.participant.CallParticipant
 import com.bandyer.core_av.OnStreamListener
 import com.bandyer.core_av.Stream
 import com.bandyer.core_av.capturer.AbstractBaseCapturer
 import com.bandyer.core_av.capturer.CapturerAV
 import com.bandyer.core_av.capturer.audio.CapturerAudio
 import com.bandyer.core_av.publisher.Publisher
+import com.bandyer.core_av.publisher.RecordingException
+import com.bandyer.core_av.publisher.RecordingListener
 import com.bandyer.core_av.room.Room
 import com.bandyer.core_av.room.RoomObserver
 import com.bandyer.core_av.room.RoomState
 import com.bandyer.core_av.room.RoomToken
 import com.bandyer.core_av.subscriber.Subscriber
 import com.bandyer.core_av.view.BandyerView
-import com.bandyer.demo_communication_center_2.R.id.*
+import com.bandyer.core_av.view.StreamView
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.android.synthetic.main.activity_call_actions.*
+import kotlinx.android.synthetic.main.activity_ringing.*
 
 
 /**
@@ -215,6 +218,29 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
     }
 
     /**
+     * When the created publisher has been added to the room this method will be invoked.
+     *
+     *
+     * Here is a good place where we can request to record our video which we are publishing.
+     *
+     * @param publisher Publisher
+     */
+    override fun onLocalPublisherJoined(publisher: Publisher) {
+        val call = CallClient.getInstance().ongoingCall
+        if (call?.options?.record == true) {
+            publisher.startRecording(object : RecordingListener {
+                override fun onSuccess(recordId: String, isRecording: Boolean) {
+                    Snackbar.make(publisherView, "Recording has been started", Snackbar.LENGTH_SHORT).show()
+                }
+
+                override fun onError(recordId: String?, isRecording: Boolean, reason: RecordingException) {
+                    Snackbar.make(publisherView, "Recording error" + reason.localizedMessage, Snackbar.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
+
+    /**
      * When a new stream is added to the room this method will be invoked.
      * Here we have the chance to subscribe to the stream just added.
      * If a remote stream is added to the room we subscribe to it, creating a subscriber object that is responsible for handling the process
@@ -243,8 +269,8 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         // bind the subscriber to a view, where the video/audio will be played
         subscriber.setView(subscriberView, object : OnStreamListener {
 
-            override fun onReadyToPlay(stream: Stream) {
-                subscriberView.play(stream)
+            override fun onReadyToPlay(view: StreamView, stream: Stream) {
+                view.play(stream)
             }
         })
     }
@@ -279,7 +305,8 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
      * The publisher will take care of streaming our video and audio feeds to the other participants in the room.
      */
     override fun onRoomEnter() {
-        val callType = CallClient.getInstance().ongoingCall?.options?.callType
+        val call = CallClient.getInstance().ongoingCall
+        val callType = call?.options?.callType
         val capturer: AbstractBaseCapturer<*> = if (callType == CallType.AUDIO_ONLY) {
             capturerAudio = CapturerAudio(this)
             capturerAudio!!
@@ -305,8 +332,22 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         // bind the publisher to a view, where the video/audio will be played
         publisher?.setView(publisherView, object : OnStreamListener {
 
-            override fun onReadyToPlay(stream: Stream) {
-                publisherView.play(stream)
+            override fun onReadyToPlay(view: StreamView, stream: Stream) {
+                view.play(stream)
+            }
+        })
+
+        // This statement is needed to subscribe as a participant observer.
+        // Once we are subscribed, we will be notified anytime a participant status changes
+        call?.participants?.addObserver(object : OnCallParticipantObserver {
+            override fun onCallParticipantStatusChanged(participant: CallParticipant) {
+                Snackbar.make(publisherView, participant.status.name, Snackbar.LENGTH_LONG).show()
+            }
+
+            override fun onCallParticipantUpgradedCallType(participant: CallParticipant, callType: CallType) {
+                Log.d("CallActivity", "onCallParticipantUpgradedCallType $participant sessionUser = ${CallClient.getInstance().sessionUser}")
+                if (participant.user.userAlias == publisher?.roomUser?.userAlias)
+                    capturerAV?.setVideoEnabled(callType == CallType.AUDIO_VIDEO)
             }
         })
     }
@@ -324,10 +365,8 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         onBackPressed()
     }
 
-    override fun onCallUpgraded(participant: CallParticipant, callType: CallType) {
-        Log.d("CallActivity", "onCallUpgraded $participant sessionUser = ${CallClient.getInstance().sessionUser}")
-        if (participant.user.userAlias == publisher?.roomUser?.userAlias)
-            capturerAV?.setVideoEnabled(callType == CallType.AUDIO_VIDEO)
+    override fun onCallUpgraded() {
+
     }
 
     override fun onCallStarted(call: Call, roomToken: RoomToken) {

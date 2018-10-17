@@ -14,6 +14,7 @@ import android.support.design.widget.Snackbar.LENGTH_SHORT
 import android.support.v7.app.AlertDialog
 import android.util.Log
 import com.bandyer.communication_center.call.Call
+import com.bandyer.communication_center.call.CallType
 import com.bandyer.communication_center.call.IncomingCall
 import com.bandyer.communication_center.call.OnCallEventObserver
 import com.bandyer.communication_center.call.participant.CallParticipant
@@ -21,8 +22,6 @@ import com.bandyer.communication_center.call.participant.OnCallParticipantObserv
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.communication_center.call_client.CallException
 import com.bandyer.communication_center.call_client.CallUpgradeException
-import com.bandyer.communication_center.call_client.User
-import com.bandyer.communication_center.call.CallType
 import com.bandyer.core_av.room.RoomToken
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_ringing.*
@@ -56,6 +55,10 @@ class RingingActivity : BaseActivity(), OnCallEventObserver {
         call?.participants?.addObserver(object : OnCallParticipantObserver {
             override fun onCallParticipantStatusChanged(participant: CallParticipant) {
                 Snackbar.make(caller, participant.status.name, Snackbar.LENGTH_LONG).show()
+            }
+
+            override fun onCallParticipantUpgradedCallType(participant: CallParticipant, callType: CallType) {
+                Log.d("RingingActivity", "onCallParticipantUpgradedCallType ${participant.user}")
             }
         })
 
@@ -114,8 +117,7 @@ class RingingActivity : BaseActivity(), OnCallEventObserver {
         super.onBackPressed()
     }
 
-    override fun onCallUpgraded(participant: CallParticipant, callType: CallType) {
-        Log.d("RingingActivity", "onCallUpgraded ${participant.user}")
+    override fun onCallUpgraded() {
     }
 
     override fun onCallError(call: Call, reason: CallException) {

@@ -19,13 +19,13 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
 import com.bandyer.communication_center.call.Call;
+import com.bandyer.communication_center.call.CallType;
 import com.bandyer.communication_center.call.OnCallEventObserver;
 import com.bandyer.communication_center.call.participant.CallParticipant;
 import com.bandyer.communication_center.call.participant.OnCallParticipantObserver;
 import com.bandyer.communication_center.call_client.CallClient;
 import com.bandyer.communication_center.call_client.CallException;
 import com.bandyer.communication_center.call_client.CallUpgradeException;
-import com.bandyer.communication_center.call.CallType;
 import com.bandyer.core_av.room.RoomToken;
 import com.squareup.picasso.Picasso;
 
@@ -78,12 +78,17 @@ public class DialingActivity extends BaseActivity implements OnCallEventObserver
         // Once we are subscribed, we will be notified anytime the call state changes
         call.addEventObserver(this);
 
-        //This statement is needed to subscribe as a participant observer.
+        // This statement is needed to subscribe as a participant observer.
         // Once we are subscribed, we will be notified anytime a participant status changes
         call.getParticipants().addObserver(new OnCallParticipantObserver() {
             @Override
             public void onCallParticipantStatusChanged(@NonNull CallParticipant participant) {
                 Snackbar.make(callee, participant.getStatus().name(), Snackbar.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onCallParticipantUpgradedCallType(@NonNull CallParticipant participant, @NonNull CallType callType) {
+                Log.d("CallActivity", "onCallParticipantUpgradedCallType participant = " + participant.getUser().getUserAlias());
             }
         });
 
@@ -120,8 +125,8 @@ public class DialingActivity extends BaseActivity implements OnCallEventObserver
     }
 
     @Override
-    public void onCallUpgraded(@NonNull CallParticipant callParticipant, @NonNull CallType callType) {
-        Log.d("DialingActivity", "onCallUpgraded " + callType.name());
+    public void onCallUpgraded() {
+        Log.d("DialingActivity", "onCallUpgraded");
     }
 
     @Override
