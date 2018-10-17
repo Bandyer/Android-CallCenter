@@ -33,6 +33,15 @@ kristiyan</p>
 <p>User that has initiated the call</p>
 </td>
 </tr>
+<tr>
+<td>
+<p><a href="upgraded-participants.html">upgradedParticipants</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">upgradedParticipants</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>Gives all the participants that have upgraded a call from Audio Upgradable to Audio&Video</p>
+</td>
+</tr>
 </tbody>
 </table>
 <h3>Functions</h3>
@@ -50,11 +59,48 @@ The observer will be notified when a status change has occurred for each user</p
 </tr>
 <tr>
 <td>
+<p><a href="get-all-participants.html">getAllParticipants</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getAllParticipants</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-mutable-list/index.html"><span class="identifier">MutableList</span></a><span class="symbol">&lt;</span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>Get all participants</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-callee.html">getCallee</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getCallee</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.participant.CallParticipants$getCallee(kotlin.String)/userAlias">userAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">?</span></code>
+<p>Utility method given a user returns the participant related</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-caller.html">getCaller</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getCaller</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.participant.CallParticipants$getCaller(kotlin.String)/userAlias">userAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">?</span></code>
+<p>Utility method given a user returns the participant related</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="get-participant.html">getParticipant</a></p>
 </td>
 <td>
-<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getParticipant</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.participant.CallParticipants$getParticipant(com.bandyer.communication_center.call_client.User)/user">user</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.communication_center.call_client/-user/index.html"><span class="identifier">User</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a></code>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getParticipant</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.participant.CallParticipants$getParticipant(com.bandyer.communication_center.call_client.User)/user">user</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.communication_center.call_client/-user/index.html"><span class="identifier">User</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">?</span></code><br/>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getParticipant</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.participant.CallParticipants$getParticipant(kotlin.String)/userAlias">userAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">?</span></code>
 <p>Utility method given a user returns the participant related</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="get-participants-by-exclusion.html">getParticipantsByExclusion</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">fun </span><span class="identifier">getParticipantsByExclusion</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.participant.CallParticipants$getParticipantsByExclusion(kotlin.String)/userAlias">userAlias</span><span class="symbol">:</span>&nbsp;<a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/index.html"><span class="identifier">List</span></a><span class="symbol">&lt;</span><a href="../-call-participant/index.html"><span class="identifier">CallParticipant</span></a><span class="symbol">&gt;</span><span class="symbol">?</span></code>
+<p>Get all participants except the one given</p>
 </td>
 </tr>
 <tr>
