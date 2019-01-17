@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.bandyer.communication_center.call_client.CallClient;
+import com.bandyer.communication_center.call_client.CallClientException;
 import com.bandyer.communication_center.call_client.OnCallClientObserver;
 import com.bandyer.communication_center.call_client.User;
 import com.bandyer.demo_communication_center.adapter_items.UserItem;
@@ -168,7 +169,7 @@ public class LoginActivity extends BaseActivity implements OnClickListener<UserI
     }
 
     @Override
-    public void onCallClientFailed() {
+    public void onCallClientFailed(@NonNull CallClientException reason) {
         Log.e("CallClient", "onCallClientFailed");
     }
 }

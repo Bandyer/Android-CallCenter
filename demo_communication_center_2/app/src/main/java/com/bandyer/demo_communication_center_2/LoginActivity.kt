@@ -12,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
 import com.bandyer.communication_center.call_client.CallClient
+import com.bandyer.communication_center.call_client.CallClientException
 import com.bandyer.communication_center.call_client.OnCallClientObserver
 import com.bandyer.communication_center.call_client.User
 import com.bandyer.demo_communication_center_2.adapter_items.UserItem
@@ -141,8 +142,8 @@ class LoginActivity : BaseActivity(), OnClickListener<UserItem>, OnCallClientObs
         Log.d("CallClient", "reconnecting")
     }
 
-    override fun onCallClientFailed() {
-        Log.d("CallClient", "failed")
+    override fun onCallClientFailed(reason: CallClientException) {
+        Log.e("CallClient", "failed" + reason.message)
     }
 
     companion object {

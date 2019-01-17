@@ -14,12 +14,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import com.bandyer.communication_center.call.Call
-import com.bandyer.communication_center.call.CallOptions
-import com.bandyer.communication_center.call.IncomingCall
-import com.bandyer.communication_center.call.OnCallCreationObserver
+import com.bandyer.communication_center.call.*
 import com.bandyer.communication_center.call_client.*
-import com.bandyer.communication_center.call.CallType
 import com.bandyer.demo_communication_center_2.adapter_items.UserSelectionItem
 import com.bandyer.demo_communication_center_2.utils.LoginManager
 import com.bandyer.demo_communication_center_2.utils.networking.BandyerUsers
@@ -198,7 +194,7 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
         DialingActivity.show(this@MainActivity)
     }
 
-    override fun onCallCreationError(reason: CallException) {
+    override fun onCallCreationError(reason: CallCreationException) {
         Log.e("MainActivity", "onCallCreationError" + reason.message)
         // If contacts could not be fetched show error dialog.
         showErrorDialog("${reason.message}")
@@ -232,8 +228,8 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
         Log.d("CallClient", "reconnecting")
     }
 
-    override fun onCallClientFailed() {
-        Log.e("CallClient", "failed")
+    override fun onCallClientFailed(reason: CallClientException) {
+        Log.e("CallClient", "failed" + reason.message)
     }
 
     companion object {

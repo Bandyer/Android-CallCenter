@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2018 Bandyer S.r.l. All Rights Reserved.
+ * See LICENSE.txt for licensing information
+ */
+
 package com.bandyer.demo_communication_center_2
 
 import android.app.Application
@@ -6,6 +11,7 @@ import com.bandyer.android_common.logging.BaseLogger
 import com.bandyer.android_common.logging.NetworkLogger
 import com.bandyer.communication_center.CommunicationCenter
 import com.bandyer.communication_center.Environment
+import com.bandyer.communication_center.EnvironmentImpl
 import com.bandyer.communication_center.utils.logging.CommCenterLogger
 import com.bandyer.demo_communication_center_2.utils.StethoReporter
 import com.facebook.stetho.Stetho
@@ -77,23 +83,23 @@ class App : Application() {
                         override val target: Int
                             get() = super.target
 
-                        public override fun verbose(tag: String, message: String) {
+                        override fun verbose(tag: String, message: String) {
                             Log.v(tag, message)
                         }
 
-                        public override fun debug(tag: String, message: String) {
+                        override fun debug(tag: String, message: String) {
                             Log.d(tag, message)
                         }
 
-                        public override fun info(tag: String, message: String) {
+                        override fun info(tag: String, message: String) {
                             Log.i(tag, message)
                         }
 
-                        public override fun warn(tag: String, message: String) {
+                        override fun warn(tag: String, message: String) {
                             Log.w(tag, message)
                         }
 
-                        public override fun error(tag: String, message: String) {
+                        override fun error(tag: String, message: String) {
                             Log.e(tag, message)
                         }
                     })

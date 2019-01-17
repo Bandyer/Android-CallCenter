@@ -22,13 +22,14 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.bandyer.communication_center.call.Call;
+import com.bandyer.communication_center.call.CallCreationException;
 import com.bandyer.communication_center.call.CallOptions;
 import com.bandyer.communication_center.call.CallType;
 import com.bandyer.communication_center.call.IncomingCall;
 import com.bandyer.communication_center.call.OnCallCreationObserver;
 import com.bandyer.communication_center.call_client.CallClient;
+import com.bandyer.communication_center.call_client.CallClientException;
 import com.bandyer.communication_center.call_client.CallClientStatus;
-import com.bandyer.communication_center.call_client.CallException;
 import com.bandyer.communication_center.call_client.OnCallClientObserver;
 import com.bandyer.communication_center.call_client.OnIncomingCallObserver;
 import com.bandyer.communication_center.call_client.User;
@@ -248,7 +249,7 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
     }
 
     @Override
-    public void onCallCreationError(@NonNull CallException reason) {
+    public void onCallCreationError(@NonNull CallCreationException reason) {
         Log.e("onCallCreationError", "onCallCreationError" + reason.getMessage());
         // If an error has occurred with the creation of the call show error dialog
         showErrorDialog(reason.getMessage());
@@ -288,7 +289,7 @@ public class MainActivity extends BaseActivity implements OnIncomingCallObserver
     }
 
     @Override
-    public void onCallClientFailed() {
+    public void onCallClientFailed(@NonNull CallClientException reason) {
         Log.e("CallClient", "onCallClientFailed");
     }
 }
