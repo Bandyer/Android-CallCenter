@@ -93,6 +93,15 @@
 </tr>
 <tr>
 <td>
+<p><a href="host-token.html">hostToken</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">hostToken</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-string/index.html"><span class="identifier">String</span></a><span class="symbol">?</span></code>
+<p>token for call</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="is-upgraded.html">isUpgraded</a></p>
 </td>
 <td>
@@ -134,6 +143,16 @@
 <tbody>
 <tr>
 <td>
+<p><a href="add-custom-event-observer.html">addCustomEventObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">addCustomEventObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.Call$addCustomEventObserver(com.bandyer.communication_center.call.OnCustomCallEventObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-custom-call-event-observer/index.html"><span class="identifier">OnCustomCallEventObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Call</span></a></code>
+<p>Method to add an custom event observer to the call.
+The observer will be notified when a custom event of that type has been received</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="add-event-observer.html">addEventObserver</a></p>
 </td>
 <td>
@@ -153,11 +172,29 @@ The observer will be notified when a status change has occurred</p>
 </tr>
 <tr>
 <td>
+<p><a href="remove-custom-event-observer.html">removeCustomEventObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">removeCustomEventObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.Call$removeCustomEventObserver(com.bandyer.communication_center.call.OnCustomCallEventObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-custom-call-event-observer/index.html"><span class="identifier">OnCustomCallEventObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Call</span></a></code>
+<p>Method to remove an observer, usually used when not interested anymore in any event coming from the call.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="remove-event-observer.html">removeEventObserver</a></p>
 </td>
 <td>
 <code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">removeEventObserver</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.Call$removeEventObserver(com.bandyer.communication_center.call.OnCallEventObserver)/observer">observer</span><span class="symbol">:</span>&nbsp;<a href="../-on-call-event-observer/index.html"><span class="identifier">OnCallEventObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Call</span></a></code>
 <p>Method to remove an observer, usually used when not interested anymore in any event coming from the call.</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="send-custom-event.html">sendCustomEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">sendCustomEvent</span><span class="symbol">(</span><span class="identifier" id="com.bandyer.communication_center.call.Call$sendCustomEvent(com.bandyer.communication_center.call.CustomCallEvent)/customEvent">customEvent</span><span class="symbol">:</span>&nbsp;<a href="../-custom-call-event/index.html"><span class="identifier">CustomCallEvent</span></a><span class="symbol">)</span><span class="symbol">: </span><a href="./index.html"><span class="identifier">Call</span></a></code>
+<p>Method to send an customEvent during a call.</p>
 </td>
 </tr>
 <tr>
