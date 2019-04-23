@@ -33,7 +33,7 @@ Coming soon.
 Download the [latest JAR](https://bintray.com/bandyer/Android-CommunicationCenter/Android-CommunicationCenter) or grab via Gradle:
 
 ```groovy
-implementation 'com.bandyer:communication_center:1.1.3'
+implementation 'com.bandyer:communication_center:1.1.4'
 ```
 
 ## Quickstart
