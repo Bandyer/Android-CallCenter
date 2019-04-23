@@ -259,7 +259,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
                 }
 
                 @Override
-                public void onError(@org.jetbrains.annotations.Nullable String recordId, boolean isRecording, @NonNull RecordingException reason) {
+                public void onError(@Nullable String recordId, boolean isRecording, @NonNull RecordingException reason) {
                     Snackbar.make(publisherView, "Recording error" + reason.getLocalizedMessage(), Snackbar.LENGTH_SHORT).show();
                 }
             });
