@@ -10,8 +10,7 @@ Bandyer is a young innovative startup that enables audio/video communication and
 
 ---
 
-. **[Overview](#overview)** .
-**[Features](#features)** .
+**[Requirements](#requirements)** .
 **[Installation](#installation)** .
 **[Quickstart](#quickstart)** .
 **[Documentation](#documentation)** .
@@ -21,12 +20,19 @@ Bandyer is a young innovative startup that enables audio/video communication and
 
 ---
 
-## Overview
+## Requirements
 
-Coming soon.
+The library is supported from API level 16 (Android 4.1 Jelly Bean).
 
-## Features
-Coming soon.
+**Requires compileOptions for Java8**
+```java
+android {
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+```
 
 ## Installation
 
