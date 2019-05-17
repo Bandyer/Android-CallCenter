@@ -14,8 +14,7 @@ Bandyer is a young innovative startup that enables audio/video communication and
 **[Installation](#installation)** .
 **[Quickstart](#quickstart)** .
 **[Documentation](#documentation)** .
-
-. **[Support](#support)** .
+**[Support](#support)** .
 **[Credits](#credits)** .
 
 ---
