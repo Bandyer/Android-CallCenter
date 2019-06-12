@@ -29,9 +29,10 @@ import com.bandyer.communication_center.call.participant.OnCallParticipantObserv
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.core_av.OnStreamListener
 import com.bandyer.core_av.Stream
-import com.bandyer.core_av.capturer.AbstractBaseCapturer
-import com.bandyer.core_av.capturer.CapturerAV
+import com.bandyer.core_av.capturer.Capturer
+import com.bandyer.core_av.capturer.CapturerOptions
 import com.bandyer.core_av.capturer.audio.CapturerAudio
+import com.bandyer.core_av.capturer.mix.CapturerAudioVideoCamera
 import com.bandyer.core_av.publisher.Publisher
 import com.bandyer.core_av.publisher.RecordingException
 import com.bandyer.core_av.publisher.RecordingListener
@@ -64,7 +65,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
 
     private var room: Room? = null
 
-    private var capturerAV: CapturerAV? = null
+    private var capturerAV: CapturerAudioVideoCamera? = null
     private var capturerAudio: CapturerAudio? = null
     private var publisher: Publisher? = null
     private var isVolumeMuted = false
@@ -166,7 +167,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         toggle_volume_off.setOnClickListener {
             it as FloatingActionButton
             isVolumeMuted = !isVolumeMuted
-            room?.muteAllAudio(isVolumeMuted)
+            room?.muteAudioAllActors(false, isVolumeMuted)
 
             val color = if (isVolumeMuted) ContextCompat.getColor(this, R.color.colorAccent) else Color.WHITE
             DrawableCompat.setTint(it.drawable, color)
@@ -179,7 +180,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         val token = intent.getStringExtra(ROOM_TOKEN)
         // Once we have the token we will start joining the virtual room.
         // This must be done only once.
-        room = Room(RoomToken(token))
+        room = Room.get(RoomToken(token))
         room?.addRoomObserver(this)
         room?.join()
     }
@@ -248,7 +249,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
      * will be reported to the observers registered on the subscriber object.
      */
     override fun onRemotePublisherJoined(stream: Stream) {
-        val subscriber = Subscriber(stream)
+        val subscriber = room!!.create(stream)
         //subscriber.addSubscribeObserver();
         room?.subscribe(subscriber)
 
@@ -303,13 +304,12 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
     override fun onRoomEnter() {
         val call = CallClient.getInstance().ongoingCall
         val callType = call?.options?.callType
-        val capturer: AbstractBaseCapturer<*> = if (callType == CallType.AUDIO_ONLY) {
-            capturerAudio = CapturerAudio(this)
+        val capturer: Capturer = if (callType == CallType.AUDIO_ONLY) {
+            capturerAudio = Capturer.get(this, CapturerOptions.Builder().withAudio()) as CapturerAudio
             capturerAudio!!
         } else {
-            capturerAV = CapturerAV(this).apply {
-                setVideoEnabled(callType == CallType.AUDIO_VIDEO && CallClient.getInstance().sessionUser?.canVideo == true)
-            }
+            capturerAV = Capturer.get(this, CapturerOptions.Builder().withAudio().withCamera()) as CapturerAudioVideoCamera
+            capturerAV!!.setVideoEnabled(callType == CallType.AUDIO_VIDEO && CallClient.getInstance().sessionUser?.canVideo == true)
             capturerAV!!
         }
 
@@ -319,7 +319,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         // Otherwise if the publish process can be started, any error occurred will be reported
         // to the observers registered on the publisher object.
 
-        publisher = Publisher(CallClient.getInstance().sessionUser!!)
+        publisher = room!!.create(CallClient.getInstance().sessionUser!!)
                 // .addPublisherObserver()
                 .setCapturer(capturer)
 
@@ -342,7 +342,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
 
             override fun onCallParticipantUpgradedCallType(participant: CallParticipant, callType: CallType) {
                 Log.d("CallActivity", "onCallParticipantUpgradedCallType $participant sessionUser = ${CallClient.getInstance().sessionUser}")
-                if (participant.user.userAlias == publisher?.roomUser?.userAlias)
+                if (participant.user.userAlias == publisher?.user?.userAlias)
                     capturerAV?.setVideoEnabled(callType == CallType.AUDIO_VIDEO)
             }
         })
@@ -383,6 +383,22 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
 
     override fun onCallStatusChanged(call: Call, status: Call.Status) {
         Log.d("CallActivity", "onCallStatusChanged " + status.name)
+    }
+
+    override fun onLocalSubscriberJoined(subscriber: Subscriber) {
+        Log.d("CallActivity", "onLocalSubscriberJoined $subscriber")
+    }
+
+    override fun onLocalSubscriberRemoved(subscriber: Subscriber) {
+        Log.d("CallActivity", "onLocalSubscriberRemoved $subscriber")
+    }
+
+    override fun onLocalSubscriberUpdateStream(subscriber: Subscriber) {
+        Log.d("CallActivity", "onLocalSubscriberUpdateStream $subscriber")
+    }
+
+    override fun onRemotePublisherUpdateStream(stream: Stream) {
+        Log.d("CallActivity", "onRemotePublisherUpdateStream $stream")
     }
 
     companion object {

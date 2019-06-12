@@ -27,16 +27,17 @@ import com.bandyer.communication_center.call.Call;
 import com.bandyer.communication_center.call.CallException;
 import com.bandyer.communication_center.call.CallOptions;
 import com.bandyer.communication_center.call.CallType;
+import com.bandyer.communication_center.call.CallUpgradeException;
 import com.bandyer.communication_center.call.OnCallEventObserver;
 import com.bandyer.communication_center.call.participant.CallParticipant;
 import com.bandyer.communication_center.call.participant.OnCallParticipantObserver;
 import com.bandyer.communication_center.call_client.CallClient;
-import com.bandyer.communication_center.call.CallUpgradeException;
 import com.bandyer.core_av.OnStreamListener;
 import com.bandyer.core_av.Stream;
-import com.bandyer.core_av.capturer.AbstractBaseCapturer;
-import com.bandyer.core_av.capturer.CapturerAV;
+import com.bandyer.core_av.capturer.Capturer;
+import com.bandyer.core_av.capturer.CapturerOptions;
 import com.bandyer.core_av.capturer.audio.CapturerAudio;
+import com.bandyer.core_av.capturer.mix.CapturerAudioVideoCamera;
 import com.bandyer.core_av.publisher.Publisher;
 import com.bandyer.core_av.publisher.RecordingException;
 import com.bandyer.core_av.publisher.RecordingListener;
@@ -76,7 +77,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
     BandyerView publisherView;
 
     private Room room;
-    private CapturerAV capturerAV;
+    private CapturerAudioVideoCamera capturerAV;
     private CapturerAudio capturerAudio;
     private Publisher publisher;
     private boolean isVolumeMuted = false;
@@ -125,7 +126,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
         String token = getIntent().getStringExtra(ROOM_TOKEN);
         // Once we have the token we will start joining the virtual room.
         // This must be done only once.
-        room = new Room(new RoomToken(token));
+        room = Room.Registry.get(new RoomToken(token));
         room.addRoomObserver(this);
         room.join();
     }
@@ -232,7 +233,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
             return;
 
         isVolumeMuted = !isVolumeMuted;
-        room.muteAllAudio(isVolumeMuted);
+        room.muteAudioAllActors(false, isVolumeMuted);
         int color = isVolumeMuted ? ContextCompat.getColor(this, R.color.colorAccent) : Color.WHITE;
         DrawableCompat.setTint(view.getDrawable(), color);
     }
@@ -279,7 +280,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
      */
     @Override
     public void onRemotePublisherJoined(@NonNull Stream stream) {
-        final Subscriber subscriber = new Subscriber(stream);
+        final Subscriber subscriber = room.create(stream);
         //subscriber.addSubscribeObserver();
         room.subscribe(subscriber);
 
@@ -328,12 +329,12 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
     public void onRoomEnter() {
         Call call = CallClient.getInstance().getOngoingCall();
         CallType callType = call.getOptions().getCallType();
-        final AbstractBaseCapturer capturer;
+        final Capturer capturer;
         if (callType == CallType.AUDIO_ONLY) {
-            capturerAudio = new CapturerAudio(this);
+            capturerAudio = (CapturerAudio) Capturer.Registry.get(this, new CapturerOptions.Builder().withAudio());
             capturer = capturerAudio;
         } else {
-            capturerAV = new CapturerAV(this);
+            capturerAV = (CapturerAudioVideoCamera) Capturer.Registry.get(this, new CapturerOptions.Builder().withAudio().withCamera());
             capturerAV.setVideoEnabled(callType == CallType.AUDIO_VIDEO && CallClient.getInstance().getSessionUser().getCanVideo());
             capturer = capturerAV;
         }
@@ -345,7 +346,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
         // Otherwise if the publish process can be started, any error occurred will be reported
         // to the observers registered on the publisher object.
 
-        publisher = new Publisher(CallClient.getInstance().getSessionUser())
+        publisher = room.create(CallClient.getInstance().getSessionUser())
                 // .addPublisherObserver()
                 .setCapturer(capturer);
 
@@ -371,7 +372,7 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
             @Override
             public void onCallParticipantUpgradedCallType(@NonNull CallParticipant participant, @NonNull CallType callType) {
                 Log.d("CallActivity", "onCallParticipantUpgradedCallType participant = " + participant.getUser().getUserAlias());
-                if (participant.getUser().getUserAlias().equals(publisher.getRoomUser().getUserAlias()) && capturerAV != null)
+                if (participant.getUser().getUserAlias().equals(publisher.getUser().getUserAlias()) && capturerAV != null)
                     capturerAV.setVideoEnabled(callType == CallType.AUDIO_VIDEO);
             }
         });
@@ -436,4 +437,25 @@ public class CallActivity extends BaseActivity implements RoomObserver, OnCallEv
     public void onRoomStateChanged(@NonNull RoomState roomState) {
         Log.d("CallActivity", "onRoomStateChanged " + roomState.name());
     }
+
+    @Override
+    public void onLocalSubscriberJoined(@NonNull Subscriber subscriber) {
+        Log.d("CallActivity", "onLocalSubscriberJoined " + subscriber);
+    }
+
+    @Override
+    public void onLocalSubscriberRemoved(@NonNull Subscriber subscriber) {
+        Log.d("CallActivity", "onLocalSubscriberRemoved " + subscriber);
+    }
+
+    @Override
+    public void onLocalSubscriberUpdateStream(@NonNull Subscriber subscriber) {
+        Log.d("CallActivity", "onLocalSubscriberUpdateStream " + subscriber);
+    }
+
+    @Override
+    public void onRemotePublisherUpdateStream(@NonNull Stream stream) {
+        Log.d("CallActivity", "onRemotePublisherUpdateStream " + stream);
+    }
+
 }
