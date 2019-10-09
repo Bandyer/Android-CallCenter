@@ -8,6 +8,7 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <uses-feature
         android:name="android.hardware.bluetooth"
         android:required="false" />
@@ -55,7 +56,6 @@
         <activity
             android:name="com.bandyer.demo_communication_center.CallActivity"
             android:configChanges="orientation|keyboard|screenSize" />
-
     </application>
 
 </manifest>

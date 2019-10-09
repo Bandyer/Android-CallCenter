@@ -14,7 +14,7 @@
     android:paddingBottom="@dimen/space32"
     android:paddingTop="@dimen/space32">
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/switch_camera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         app:backgroundTint="@color/colorPrimary"
         app:elevation="0dp" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/toggle_microphone_off"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
         app:backgroundTint="@color/colorPrimary"
         app:elevation="0dp" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/space16"
@@ -50,7 +50,7 @@
         android:contentDescription="@string/hang_up"
         android:visibility="invisible" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/toggle_camera_off"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
         app:backgroundTint="@color/colorPrimary"
         app:elevation="0dp" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/toggle_volume_off"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

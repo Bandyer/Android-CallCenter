@@ -4,7 +4,7 @@
   -->
 
 <resources>
-    <string name="app_name">CommCenter</string>
+    <string name="app_name">Communication Center</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_login">LoginActivity</string>
 
