@@ -34,10 +34,7 @@ import com.bandyer.core_av.capturer.mix.CapturerAudioVideoCamera
 import com.bandyer.core_av.publisher.Publisher
 import com.bandyer.core_av.publisher.RecordingException
 import com.bandyer.core_av.publisher.RecordingListener
-import com.bandyer.core_av.room.Room
-import com.bandyer.core_av.room.RoomObserver
-import com.bandyer.core_av.room.RoomState
-import com.bandyer.core_av.room.RoomToken
+import com.bandyer.core_av.room.*
 import com.bandyer.core_av.subscriber.Subscriber
 import com.bandyer.core_av.view.BandyerView
 import com.bandyer.core_av.view.StreamView
@@ -397,6 +394,14 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
 
     override fun onRemotePublisherUpdateStream(stream: Stream) {
         Log.d("CallActivity", "onRemotePublisherUpdateStream $stream")
+    }
+
+    override fun onLocalPublisherUpdateStream(publisher: Publisher) {
+        Log.d("CallActivity", "onLocalPublisherUpdateStream $publisher")
+    }
+
+    override fun onRoomActorUpdateStream(roomActor: RoomActor) {
+        Log.d("CallActivity", "onRoomActorUpdateStream $roomActor")
     }
 
     companion object {
