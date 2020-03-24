@@ -13,8 +13,6 @@ import com.bandyer.communication_center.CommunicationCenter
 import com.bandyer.communication_center.Environment
 import com.bandyer.communication_center.utils.logging.CommCenterLogger
 import com.bandyer.demo_communication_center.utils.StethoReporter
-import com.bandyer.demo_communication_center.BuildConfig
-import com.bandyer.demo_communication_center.R
 import com.facebook.stetho.Stetho
 import com.facebook.stetho.okhttp3.StethoInterceptor
 import com.google.gson.GsonBuilder
@@ -26,13 +24,17 @@ import okhttp3.OkHttpClient
  */
 class App : Application() {
 
+    companion object {
+        lateinit var client: OkHttpClient
+    }
+
     override fun onCreate() {
         super.onCreate()
 
         // Debug tools
         initStetho()
 
-        val client = OkHttpClient.Builder().addNetworkInterceptor(StethoInterceptor())
+        client = OkHttpClient.Builder().addNetworkInterceptor(StethoInterceptor()).build()
 
         // The sdk needs to me initialized with a builder pattern.
         // the app_id check values/configuration.xml
@@ -106,7 +108,7 @@ class App : Application() {
 
         commBuilder
                 // link your OkHttpClient in case you have it customized
-                .setHttpStackBuilder(client)
+                .setHttpStack(client)
                 //Here we set the sdk environment to sandbox, don't forget to set it to production when ready to release your app.
                 .setEnvironment(Environment.sandbox())
                 // link your personal Gson in case you wish to personalize some settings

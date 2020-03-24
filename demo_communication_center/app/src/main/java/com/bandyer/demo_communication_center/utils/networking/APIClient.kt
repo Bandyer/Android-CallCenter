@@ -5,6 +5,7 @@
 
 package com.bandyer.demo_communication_center.utils.networking
 
+import com.bandyer.demo_communication_center.App
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -25,7 +26,7 @@ object APIClient {
         if (retrofit != null)
             return retrofit!!
 
-        val client = OkHttpClient.Builder()
+        val client = App.client.newBuilder()
                 .addInterceptor(authenticationHeaders(apikey))
                 .build()
 

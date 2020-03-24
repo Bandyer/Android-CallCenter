@@ -105,7 +105,7 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
 
     override fun onCallEnded(call: Call, callEndReason: Call.EndReason) {
         Log.d("DialingActivity", "onCallEnded " + callEndReason.name)
-        onBackPressed()
+        finish()
     }
 
     override fun onCallStatusChanged(call: Call, status: Call.Status) {
@@ -117,7 +117,7 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
         // If an error has occurred with the creation of the call show error dialog
         showErrorDialog("${reason.message}")
         if (reason !is CallUpgradeException)
-            onBackPressed()
+            finish()
     }
 
     /************************************Permissions Requests **************************************
