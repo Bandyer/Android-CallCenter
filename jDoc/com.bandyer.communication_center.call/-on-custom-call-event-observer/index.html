@@ -1,0 +1,38 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>OnCustomCallEventObserver - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.communication_center.call</a>&nbsp;/&nbsp;<a href="./index.html">OnCustomCallEventObserver</a><br/>
+<br/>
+<h1>OnCustomCallEventObserver</h1>
+<code><span class="keyword">interface </span><span class="identifier">OnCustomCallEventObserver</span></code>
+<p>CustomCallEvent Observer</p>
+<p>Used to notify when a custom event has been received</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="get-event-names.html">getEventNames</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">getEventNames</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">java.util.List</span><span class="symbol">&lt;</span><span class="identifier">java.lang.String</span><span class="symbol">&gt;</span></code>
+<p>List of events to observe</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-event-received.html">onEventReceived</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onEventReceived</span><span class="symbol">(</span><span class="identifier">event</span><span class="symbol">:</span>&nbsp;<a href="../-custom-call-event/index.html"><span class="identifier">com.bandyer.communication_center.call.CustomCallEvent</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">void</span></code>
+<p>Method to notify when an event from the eventNames list has been received</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

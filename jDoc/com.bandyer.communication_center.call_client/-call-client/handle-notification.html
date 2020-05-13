@@ -1,0 +1,27 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CallClient.handleNotification - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.communication_center.call_client</a>&nbsp;/&nbsp;<a href="index.html">CallClient</a>&nbsp;/&nbsp;<a href="./handle-notification.html">handleNotification</a><br/>
+<br/>
+<h1>handleNotification</h1>
+<code><span class="identifier">@&lt;?&gt;</span> <span class="keyword">fun </span><span class="identifier">handleNotification</span><span class="symbol">(</span><span class="identifier">@NotNull</span> <span class="identifier">data</span><span class="symbol">:</span>&nbsp;<span class="identifier">java.lang.String</span><span class="symbol">, </span><span class="identifier">@NotNull</span> <span class="identifier">onNotificationObserver</span><span class="symbol">:</span>&nbsp;<a href="../-on-notification-observer/index.html"><span class="identifier">com.bandyer.communication_center.call_client.OnNotificationObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">void</span></code>
+<p>Parses the notification payload provided as first argument. If the payload is in the expected format it will report a new
+call object, otherwise, if the payload cannot be parsed, or is malformed an error will be reported via the observer.</p>
+<p>An error will be reported also in the case the call client is not connected, or another call is in progress.
+You should not pass the notification payload received from APNs as is.
+You must provide the string containing the data your back-end has received from the bandyer's back-end system.</p>
+<p><strong>Note:</strong>
+ The call client must be connected to bandyer's platform before it can handle a remote notification.
+ You must call this method after onCallClientInitialized(sessionUser) was called, otherwise it will fail
+ even if the payload is valid.</p>
+<h3>Parameters</h3>
+<p><a name="data"></a>
+<code>data</code> - Bandyer's notification payload</p>
+<p><a name="onNotificationObserver"></a>
+<code>onNotificationObserver</code> - OnNotificationObserver result listener</p>
+</BODY>
+</HTML>

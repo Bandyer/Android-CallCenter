@@ -1,0 +1,65 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>CommunicationCenterInterface - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.communication_center</a>&nbsp;/&nbsp;<a href="./index.html">CommunicationCenterInterface</a><br/>
+<br/>
+<h1>CommunicationCenterInterface</h1>
+<code><span class="keyword">interface </span><span class="identifier">CommunicationCenterInterface</span></code>
+<p>Represents the instance of the entry point for the CommunicationCenter module.</p>
+<h3>Properties</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="gson.html">gson</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">gson</span><span class="symbol">: </span><span class="identifier">Gson</span></code>
+<p>Gson used to serialize/deserialize objects within the SDK</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="http-stack.html">httpStack</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">val </span><span class="identifier">httpStack</span><span class="symbol">: </span><span class="identifier">OkHttpClient</span></code>
+<p>OKHttpClient used for the communication within the SDK</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="release.html">release</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">release</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-unit/index.html"><span class="identifier">Unit</span></a></code>
+<p>Method to release resources which normally should not be called</p>
+</td>
+</tr>
+</tbody>
+</table>
+<h3>Inheritors</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="../-communication-center/index.html">CommunicationCenter</a></p>
+</td>
+<td>
+<code><span class="keyword">open</span> <span class="keyword">class </span><span class="identifier">CommunicationCenter</span>&nbsp;<span class="symbol">:</span>&nbsp;<a href="./index.html"><span class="identifier">CommunicationCenterInterface</span></a></code>
+<p>Represents the entry point for the CommunicationCenter module.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>

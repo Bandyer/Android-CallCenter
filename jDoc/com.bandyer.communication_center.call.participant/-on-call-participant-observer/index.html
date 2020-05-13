@@ -1,0 +1,39 @@
+<HTML>
+<HEAD>
+<meta charset="UTF-8">
+<title>OnCallParticipantObserver - </title>
+<link rel="stylesheet" href="../../style.css">
+</HEAD>
+<BODY>
+<a href="../index.html">com.bandyer.communication_center.call.participant</a>&nbsp;/&nbsp;<a href="./index.html">OnCallParticipantObserver</a><br/>
+<br/>
+<h1>OnCallParticipantObserver</h1>
+<code><span class="keyword">interface </span><span class="identifier">OnCallParticipantObserver</span></code>
+<p>CallParticipant Observer</p>
+<p><strong>Author</strong><br/>
+kristiyan</p>
+<h3>Functions</h3>
+<table>
+<tbody>
+<tr>
+<td>
+<p><a href="on-call-participant-status-changed.html">onCallParticipantStatusChanged</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallParticipantStatusChanged</span><span class="symbol">(</span><span class="identifier">participant</span><span class="symbol">:</span>&nbsp;<a href="../-call-participant/index.html"><span class="identifier">com.bandyer.communication_center.call.participant.CallParticipant</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">void</span></code>
+<p>Method to notify when the status of a participant has changed</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="on-call-participant-upgraded-call-type.html">onCallParticipantUpgradedCallType</a></p>
+</td>
+<td>
+<code><span class="keyword">abstract</span> <span class="keyword">fun </span><span class="identifier">onCallParticipantUpgradedCallType</span><span class="symbol">(</span><span class="identifier">participant</span><span class="symbol">:</span>&nbsp;<a href="../-call-participant/index.html"><span class="identifier">com.bandyer.communication_center.call.participant.CallParticipant</span></a><span class="symbol">, </span><span class="identifier">callType</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.communication_center.call/-call-type/index.html"><span class="identifier">com.bandyer.communication_center.call.CallType</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">void</span></code>
+<p>Method to notify when a participant has upgraded his call type from Audio Upgradable to Audio&Video</p>
+</td>
+</tr>
+</tbody>
+</table>
+</BODY>
+</HTML>
