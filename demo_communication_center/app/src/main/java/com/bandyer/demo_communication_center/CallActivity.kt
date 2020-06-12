@@ -332,7 +332,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         // Once we are subscribed, we will be notified anytime a participant status changes
         call?.participants?.addObserver(object : OnCallParticipantObserver {
             override fun onCallParticipantStatusChanged(participant: CallParticipant) {
-                Snackbar.make(publisherView, participant.status.name, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(publisherView, participant.status.name(), Snackbar.LENGTH_LONG).show()
             }
 
             override fun onCallParticipantUpgradedCallType(participant: CallParticipant, callType: CallType) {
@@ -377,7 +377,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
     }
 
     override fun onCallStatusChanged(call: Call, status: Call.Status) {
-        Log.d("CallActivity", "onCallStatusChanged " + status.name)
+        Log.d("CallActivity", "onCallStatusChanged " + status.name())
     }
 
     override fun onLocalSubscriberJoined(subscriber: Subscriber) {
