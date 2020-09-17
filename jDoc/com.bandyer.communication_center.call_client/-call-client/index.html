@@ -40,6 +40,16 @@ kristiyan</p>
 <tbody>
 <tr>
 <td>
+<p><a href="add-custom-event-observer.html">addCustomEventObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">addCustomEventObserver</span><span class="symbol">(</span><span class="identifier">observer</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.communication_center.call/-on-custom-event-observer/index.html"><span class="identifier">com.bandyer.communication_center.call.OnCustomEventObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">void</span></code>
+<p>Method to add an custom event observer to the communication center connection.
+The observer will be notified when a custom event of that type has been received.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="add-incoming-call-observer.html">addIncomingCallObserver</a></p>
 </td>
 <td>
@@ -153,6 +163,15 @@ in the observer provided as argument.</p>
 </tr>
 <tr>
 <td>
+<p><a href="remove-custom-event-observer.html">removeCustomEventObserver</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">removeCustomEventObserver</span><span class="symbol">(</span><span class="identifier">observer</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.communication_center.call/-on-custom-event-observer/index.html"><span class="identifier">com.bandyer.communication_center.call.OnCustomEventObserver</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">void</span></code>
+<p>Method to remove an observer, usually used when not interested anymore in any event coming from communication center.</p>
+</td>
+</tr>
+<tr>
+<td>
 <p><a href="remove-incoming-call-observer.html">removeIncomingCallObserver</a></p>
 </td>
 <td>
@@ -176,6 +195,15 @@ in the observer provided as argument.</p>
 <td>
 <code><span class="keyword">fun </span><span class="identifier">resume</span><span class="symbol">(</span><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">void</span></code>
 <p>Method to resume the CallClient lifecycle</p>
+</td>
+</tr>
+<tr>
+<td>
+<p><a href="send-custom-event.html">sendCustomEvent</a></p>
+</td>
+<td>
+<code><span class="keyword">fun </span><span class="identifier">sendCustomEvent</span><span class="symbol">(</span><span class="identifier">customEvent</span><span class="symbol">:</span>&nbsp;<a href="../../com.bandyer.communication_center.call/-custom-event/index.html"><span class="identifier">com.bandyer.communication_center.call.CustomEvent</span></a><span class="symbol">)</span><span class="symbol">: </span><span class="identifier">void</span></code>
+<p>Method to send an customEvent to the communication center communication channel.</p>
 </td>
 </tr>
 <tr>
