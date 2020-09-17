@@ -50,7 +50,7 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
         // Once we are subscribed, we will be notified anytime a participant status changes
         call!!.participants.addObserver(object : OnCallParticipantObserver {
             override fun onCallParticipantStatusChanged(participant: CallParticipant) {
-                Snackbar.make(callee, participant.status.name(), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(callee, participant.status.name, Snackbar.LENGTH_LONG).show()
             }
 
             override fun onCallParticipantUpgradedCallType(participant: CallParticipant, callType: CallType) {
@@ -104,12 +104,12 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
     }
 
     override fun onCallEnded(call: Call, callEndReason: Call.EndReason) {
-        Log.d("DialingActivity", "onCallEnded " + callEndReason.name())
+        Log.d("DialingActivity", "onCallEnded " + callEndReason.name)
         finish()
     }
 
     override fun onCallStatusChanged(call: Call, status: Call.Status) {
-        Log.d("DialingActivity", "onCallStatusChanged " + status.name())
+        Log.d("DialingActivity", "onCallStatusChanged " + status.name)
     }
 
     override fun onCallError(call: Call, reason: CallException) {

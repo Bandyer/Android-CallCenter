@@ -83,7 +83,8 @@ dependencies {
     implementation "com.mikepenz:fastadapter-extensions:$fastAdapterVersion"
     implementation "com.mikepenz:fastadapter-commons:$fastAdapterVersion"
 
-    /*** Bandyer Communication Center ***/
-    implementation "com.bandyer:communication_center:1.2.11"
+//    /*** Bandyer Communication Center ***/
+    implementation "com.bandyer:communication_center:1.2.12"
+    
     implementation "com.bandyer:bandyer-android-audiosession:1.0.6"
 }
