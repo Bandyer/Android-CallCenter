@@ -49,19 +49,9 @@ Coming soon.
 
 This sdk depends on [CoreAV SDK](https://github.com/Bandyer/Android-CoreAV)
 
-You can find the complete documentation in two different styles
+[CommunicationCenter](https://bandyer.github.io/Bandyer-Android-CommunicationCenter/kDoc/communication_center/)
 
-**Kotlin**
-
-[CommunicationCenter](https://bandyer.github.io/Bandyer-Android-CommunicationCenter/kDoc/)
-
-[CoreAV](https://bandyer.github.io/Android-CoreAV/kDoc/)
-
-**Java**
-
-[CommunicationCenter](https://bandyer.github.io/Bandyer-Android-CommunicationCenter/jDoc/)
-
-[CoreAV](https://bandyer.github.io/Android-CallCenter/jDoc/)
+[CoreAV](https://docs.bandyer.com/Bandyer-Android-CoreAV/kDoc/core_av/)
 
 
 

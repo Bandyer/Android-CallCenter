@@ -16,6 +16,7 @@ def retrofitVersion = "2.6.2"
 def leakCanaryVersion = "2.2"
 def fastAdapterVersion = "3.3.1"
 def picassoLibVersion = "2.71828"
+def multidex_version = "2.0.1"
 
 android {
     compileSdkVersion sdkVersion
@@ -27,6 +28,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -41,6 +43,10 @@ android {
     androidExtensions {
         experimental = true
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
@@ -48,6 +54,7 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
     /*** Platform ***/
+    implementation "androidx.multidex:multidex:$multidex_version"
     implementation "androidx.appcompat:appcompat:1.1.0"
     implementation "androidx.exifinterface:exifinterface:1.2.0"
     implementation "androidx.vectordrawable:vectordrawable-animated:1.1.0"
@@ -84,7 +91,12 @@ dependencies {
     implementation "com.mikepenz:fastadapter-commons:$fastAdapterVersion"
 
 //    /*** Bandyer Communication Center ***/
-    implementation "com.bandyer:communication_center:1.2.12"
-    
+    implementation "com.bandyer:communication_center:1.2.13"
+
+    /*** EXTENSIONS ***/
+    implementation "com.bandyer:extension_live_pointer:1.0.0"
+
+    /*** Bandyer's utilities ***/
+    implementation("com.bandyer:bandyer-android-design:0.0.47")
     implementation "com.bandyer:bandyer-android-audiosession:1.0.6"
 }

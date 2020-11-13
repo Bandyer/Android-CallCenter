@@ -7,6 +7,7 @@ package com.bandyer.demo_communication_center
 
 import android.app.Application
 import android.util.Log
+import androidx.multidex.MultiDexApplication
 import com.bandyer.android_common.logging.BaseLogger
 import com.bandyer.android_common.logging.NetworkLogger
 import com.bandyer.communication_center.CommunicationCenter
@@ -22,7 +23,7 @@ import okhttp3.OkHttpClient
  *
  * @author kristiyan
  */
-class App : Application() {
+class App : MultiDexApplication() {
 
     companion object {
         lateinit var client: OkHttpClient

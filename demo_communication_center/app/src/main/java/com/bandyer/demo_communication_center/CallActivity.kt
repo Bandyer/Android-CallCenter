@@ -11,10 +11,15 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import com.bandyer.communication_center.live_pointer.LivePointer
+import com.bandyer.communication_center.live_pointer.PointerEventListener
+import com.bandyer.communication_center.live_pointer.model.PointerEvent
 import com.bandyer.android_audiosession.AudioOutputDeviceType
 import com.bandyer.android_audiosession.AudioSession
 import com.bandyer.android_audiosession.AudioSessionOptions
@@ -27,10 +32,10 @@ import com.bandyer.communication_center.call.participant.OnCallParticipantObserv
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.core_av.OnStreamListener
 import com.bandyer.core_av.Stream
+import com.bandyer.core_av.capturer.CameraCapturer
 import com.bandyer.core_av.capturer.Capturer
-import com.bandyer.core_av.capturer.CapturerOptions
-import com.bandyer.core_av.capturer.audio.CapturerAudio
-import com.bandyer.core_av.capturer.mix.CapturerAudioVideoCamera
+import com.bandyer.core_av.capturer.capturer
+import com.bandyer.core_av.capturer.video.provider.camera.CameraVideoFeeder
 import com.bandyer.core_av.publisher.Publisher
 import com.bandyer.core_av.publisher.RecordingException
 import com.bandyer.core_av.publisher.RecordingListener
@@ -38,11 +43,11 @@ import com.bandyer.core_av.room.*
 import com.bandyer.core_av.subscriber.Subscriber
 import com.bandyer.core_av.view.BandyerView
 import com.bandyer.core_av.view.StreamView
+import com.bandyer.sdk_design.call.widgets.LivePointerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_call.*
 import kotlinx.android.synthetic.main.activity_call_actions.*
-
 
 /**
  * This activity will take care of handling the actual video call process.
@@ -58,11 +63,10 @@ import kotlinx.android.synthetic.main.activity_call_actions.*
  */
 class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, ProximitySensorListener {
 
-
     private var room: Room? = null
 
-    private var capturerAV: CapturerAudioVideoCamera? = null
-    private var capturerAudio: CapturerAudio? = null
+    private var capturerAV: CameraCapturer? = null
+    private var capturerAudio: Capturer<*, *>? = null
     private var publisher: Publisher? = null
     private var isVolumeMuted = false
     private var snackbar: Snackbar? = null
@@ -103,7 +107,6 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
                 },
                 object : ProximitySensorListener {
                     override fun onProximitySensorChanged(isNear: Boolean) {
-
                     }
                 })
 
@@ -126,7 +129,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
          * Stream object contained in the publisher and subscriber contain information of the current audio/video status and other features.
          */
         switch_camera.setOnClickListener {
-            capturerAV?.switchVideoFeeder()
+            capturerAV?.video?.frameProvider?.switchVideoFeeder()
         }
 
         /**
@@ -137,10 +140,10 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         toggle_camera_off.setOnClickListener {
             it as FloatingActionButton
             val canVideo = CallClient.getInstance().ongoingCall?.options?.callType != CallType.AUDIO_ONLY && CallClient.getInstance().sessionUser?.canVideo == true
-            capturerAV?.setVideoEnabled(capturerAV?.isVideoEnabled != true && canVideo)
+            capturerAV?.video?.videoEnabled = (capturerAV?.video?.videoEnabled != true && canVideo)
             if (CallClient.getInstance().ongoingCall?.options?.callType == CallType.AUDIO_UPGRADABLE && canVideo)
                 CallClient.getInstance().ongoingCall?.upgradeCallType()
-            setVideoCameraDrawable(capturerAV?.isVideoEnabled == true)
+            setVideoCameraDrawable(capturerAV?.video?.videoEnabled == true)
         }
 
         /**
@@ -150,8 +153,9 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
          */
         toggle_microphone_off.setOnClickListener {
             it as FloatingActionButton
-            capturerAV?.setAudioEnabled(!capturerAV!!.isAudioEnabled)
-            val color = if (capturerAV?.isAudioEnabled == true) Color.WHITE else ContextCompat.getColor(this, R.color.colorAccent)
+            val audio = capturerAudio?.audio ?: capturerAV?.audio ?: return@setOnClickListener
+            audio.audioEnabled = !audio.audioEnabled
+            val color = if (audio.audioEnabled) Color.WHITE else ContextCompat.getColor(this, R.color.colorAccent)
             DrawableCompat.setTint(it.drawable, color)
         }
 
@@ -172,13 +176,64 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         CallClient.getInstance().ongoingCall!!.addEventObserver(this)
         setVideoCameraDrawable(CallClient.getInstance().sessionUser!!.canVideo && CallClient.getInstance().ongoingCall!!.options?.callType == CallType.AUDIO_VIDEO)
 
-        val token = intent.getStringExtra(ROOM_TOKEN)
+        val token = intent.getStringExtra(ROOM_TOKEN)!!
         // Once we have the token we will start joining the virtual room.
         // This must be done only once.
         room = Room.get(RoomToken(token))
         room?.addRoomObserver(this)
         room?.join()
+
+        @Suppress("EXPERIMENTAL_API_USAGE")
+        LivePointer.startListeningToPointerEvents(CallClient.getInstance().ongoingCall!!, object : PointerEventListener {
+            override fun onPointerEvent(call: Call, pointerEvent: PointerEvent) {
+                val bandyerView = when {
+                    (publisher!!.stream!!.streamId == pointerEvent.streamId) -> publisherView
+                    else -> {
+                        (0 until subscribersListView.childCount)
+                                .map { subscribersListView.getChildAt(it) as BandyerView }
+                                .first { it.tag == pointerEvent.streamId }
+                    }
+                } as FrameLayout
+
+                val pointerViewTag = getPointerViewTag(pointerEvent)
+
+                (bandyerView.findViewWithTag(pointerViewTag)
+                        ?: LivePointerView(this@CallActivity).apply {
+                            this.tag = pointerViewTag
+                            val video = bandyerView.findViewById<View>(R.id.video)
+                            bandyerView.addView(this, FrameLayout.LayoutParams(video.width, video.height).apply {
+                                this.gravity = Gravity.CENTER
+                            })
+                        }).let { livePointerView ->
+
+                    livePointerView.visibility = View.VISIBLE
+                    livePointerView.updateLabelText(pointerEvent.requester.user.userAlias!!)
+
+                    val horizontalPercentage =
+                            if (publisher!!.stream!!.streamId == pointerEvent.streamId)
+                                100 - pointerEvent.pointerPosition.horizontalPercent
+                            else pointerEvent.pointerPosition.horizontalPercent
+
+                    livePointerView.updateLivePointerPosition(
+                            horizontalPercentage,
+                            pointerEvent.pointerPosition.verticalPercent)
+                }
+            }
+
+            override fun onPointerIdle(call: Call, lastPointerEvent: PointerEvent) {
+                (when {
+                    (publisher!!.stream!!.streamId == lastPointerEvent.streamId) -> publisherView
+                    else -> {
+                        (0 until subscribersListView.childCount)
+                                .map { subscribersListView.getChildAt(it) as BandyerView }
+                                .first { it.tag == lastPointerEvent.streamId }
+                    }
+                } as FrameLayout).findViewWithTag<LivePointerView>(getPointerViewTag(lastPointerEvent))?.hide()
+            }
+        })
     }
+
+    private fun getPointerViewTag(pointerEvent: PointerEvent) = "LivePointerView.${pointerEvent.streamId}.${pointerEvent.requester.user.userAlias}"
 
     private fun setVideoCameraDrawable(enabled: Boolean) {
         val color = if (enabled) Color.WHITE else ContextCompat.getColor(this, R.color.colorAccent)
@@ -254,7 +309,6 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
         subscriberView.bringToFront(true)
         val size = getDp(120)
 
-
         // add the view to the view-list of subscribers
         subscribersListView!!.addView(subscriberView, ViewGroup.LayoutParams(size, size))
 
@@ -299,12 +353,18 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
     override fun onRoomEnter() {
         val call = CallClient.getInstance().ongoingCall
         val callType = call?.options?.callType
-        val capturer: Capturer = if (callType == CallType.AUDIO_ONLY) {
-            capturerAudio = Capturer.get(this, CapturerOptions.Builder().withAudio()) as CapturerAudio
+        val capturer = if (callType == CallType.AUDIO_ONLY) {
+            capturerAudio = capturer(this) {
+                audio = default()
+            }
             capturerAudio!!
         } else {
-            capturerAV = Capturer.get(this, CapturerOptions.Builder().withAudio().withCamera()) as CapturerAudioVideoCamera
-            capturerAV!!.setVideoEnabled(callType == CallType.AUDIO_VIDEO && CallClient.getInstance().sessionUser?.canVideo == true)
+            capturerAV = capturer(this) {
+                audio = default()
+                video = camera()
+            }
+            capturerAV!!.video!!.videoEnabled = (callType == CallType.AUDIO_VIDEO && CallClient.getInstance().sessionUser?.canVideo == true)
+            publisherView.setMirror(capturerAV!!.video!!.frameProvider.currentCameraFeeder is CameraVideoFeeder.FRONT_CAMERA)
             capturerAV!!
         }
 
@@ -338,7 +398,7 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
             override fun onCallParticipantUpgradedCallType(participant: CallParticipant, callType: CallType) {
                 Log.d("CallActivity", "onCallParticipantUpgradedCallType $participant sessionUser = ${CallClient.getInstance().sessionUser}")
                 if (participant.user.userAlias == publisher?.user?.userAlias)
-                    capturerAV?.setVideoEnabled(callType == CallType.AUDIO_VIDEO)
+                    capturerAV?.video?.videoEnabled = (callType == CallType.AUDIO_VIDEO)
             }
         })
     }
@@ -357,7 +417,6 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
     }
 
     override fun onCallUpgraded() {
-
     }
 
     override fun onCallStarted(call: Call, roomToken: RoomToken) {
@@ -414,7 +473,5 @@ class CallActivity : BaseActivity(), RoomObserver, OnCallEventObserver, Proximit
 
             activity.startActivityForResult(intent, 0)
         }
-
     }
-
 }
