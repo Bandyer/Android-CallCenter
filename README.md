@@ -1,5 +1,5 @@
 <p align="center">
-<img src="img/bandyer.jpg" alt="Bandyer" title="Bandyer" />
+<img src="img/bandyer.png" alt="Bandyer" title="Bandyer" />
 </p>
 
 [ ![Download](https://api.bintray.com/packages/bandyer/Android-CommunicationCenter/Android-CommunicationCenter/images/download.svg) ](https://bintray.com/bandyer/Android-CommunicationCenter/Android-CommunicationCenter/_latestVersion)[![Docs](https://img.shields.io/badge/docs-current-brightgreen.svg)](https://bandyer.github.io/Bandyer-Android-CommunicationCenter/)[![Twitter](https://img.shields.io/twitter/url/http/shields.io.svg?style=social&logo=twitter)](https://twitter.com/intent/follow?screen_name=bandyersrl)
