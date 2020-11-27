@@ -91,7 +91,7 @@ dependencies {
     implementation "com.mikepenz:fastadapter-commons:$fastAdapterVersion"
 
 //    /*** Bandyer Communication Center ***/
-    implementation "com.bandyer:communication_center:1.2.13"
+    implementation "com.bandyer:communication_center:1.2.14"
 
     /*** EXTENSIONS ***/
     implementation "com.bandyer:extension_live_pointer:1.0.0"
