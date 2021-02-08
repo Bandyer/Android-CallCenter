@@ -1,0 +1,13 @@
+$dokka.format:html-v1
+$dokka.linkExtension:html
+$dokka.location:com.bandyer.communication_center.live_pointer.model/PointerEvent/<get-call>/#/PointingToDeclaration/com.bandyer.communication_center.live_pointer.model/-pointer-event/get-call.html
+$dokka.location:com.bandyer.communication_center.live_pointer.model/PointerEvent/<get-pointerPosition>/#/PointingToDeclaration/com.bandyer.communication_center.live_pointer.model/-pointer-event/get-pointer-position.html
+$dokka.location:com.bandyer.communication_center.live_pointer.model/PointerEvent/<get-requester>/#/PointingToDeclaration/com.bandyer.communication_center.live_pointer.model/-pointer-event/get-requester.html
+$dokka.location:com.bandyer.communication_center.live_pointer.model/PointerEvent/<get-streamId>/#/PointingToDeclaration/com.bandyer.communication_center.live_pointer.model/-pointer-event/get-stream-id.html
+$dokka.location:com.bandyer.communication_center.live_pointer.model/PointerPosition/<get-horizontalPercent>/#/PointingToDeclaration/com.bandyer.communication_center.live_pointer.model/-pointer-position/get-horizontal-percent.html
+$dokka.location:com.bandyer.communication_center.live_pointer.model/PointerPosition/<get-verticalPercent>/#/PointingToDeclaration/com.bandyer.communication_center.live_pointer.model/-pointer-position/get-vertical-percent.html
+$dokka.location:com.bandyer.communication_center.live_pointer/LivePointer/<get-IDLE_TIMEOUT>/#/PointingToDeclaration/com.bandyer.communication_center.live_pointer/-live-pointer/get-i-d-l-e_-t-i-m-e-o-u-t.html
+$dokka.location:com.bandyer.communication_center.live_pointer/LivePointer/<get-SAMPLING_PERIOD>/#/PointingToDeclaration/com.bandyer.communication_center.live_pointer/-live-pointer/get-s-a-m-p-l-i-n-g_-p-e-r-i-o-d.html
+com.bandyer.communication_center.live_pointer
+com.bandyer.communication_center.live_pointer.model
+
