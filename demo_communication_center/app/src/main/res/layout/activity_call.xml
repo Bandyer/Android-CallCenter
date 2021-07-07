@@ -27,6 +27,17 @@
 
     </HorizontalScrollView>
 
+    <Button
+        android:id="@+id/file_sharing_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:backgroundTint="@color/colorPrimary"
+        android:textColor="@color/colorOnPrimary"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/file_share" />
+
     <include
         android:id="@+id/actions"
         layout="@layout/activity_call_actions"

@@ -8,22 +8,19 @@ package com.bandyer.demo_communication_center
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
-import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.communication_center.call_client.CallClientException
 import com.bandyer.communication_center.call_client.OnCallClientObserver
 import com.bandyer.communication_center.call_client.User
 import com.bandyer.demo_communication_center.adapter_items.UserItem
+import com.bandyer.demo_communication_center.databinding.ActivityLoginBinding
 import com.bandyer.demo_communication_center.utils.LoginManager
 import com.bandyer.demo_communication_center.utils.networking.BandyerUsers
 import com.bandyer.demo_communication_center.utils.networking.MockedNetwork
 import com.mikepenz.fastadapter.FastAdapter
-import com.mikepenz.fastadapter.IAdapter
 import com.mikepenz.fastadapter.adapters.ItemAdapter
-import com.mikepenz.fastadapter.listeners.OnClickListener
-import kotlinx.android.synthetic.main.activity_login.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,22 +33,35 @@ import retrofit2.Response
  * For more information about how it works FastAdapter:
  * https://github.com/mikepenz/FastAdapter
  */
-class LoginActivity : BaseActivity(), OnClickListener<UserItem>, OnCallClientObserver {
+class LoginActivity : BaseActivity(), OnCallClientObserver {
 
     // the userAlias is the identifier of the created user via Bandyer-server restCall see https://docs.bandyer.com/Bandyer-RESTAPI/#create-user
     private var userAlias = ""
     private val itemAdapter = ItemAdapter<UserItem>()
-    private val fastAdapter = FastAdapter.with<UserItem, ItemAdapter<UserItem>>(itemAdapter)
+    private val fastAdapter = FastAdapter.with(itemAdapter)
+
+    private lateinit var binding: ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         // set the recyclerView
-        list_users.adapter = fastAdapter
-        list_users.layoutManager = LinearLayoutManager(this)
+        binding.listUsers.adapter = fastAdapter
+        binding.listUsers.layoutManager = LinearLayoutManager(this)
 
-        fastAdapter.withOnClickListener(this)
+        /**
+         * On click on a user from the list initialize the call client for that user
+         * save the userAlias to be used for login after the call client has been initialized
+         */
+        fastAdapter.onClickListener = { _, _, item, _ ->
+            userAlias = item.userAlias
+            //This statement is needed to initialize the call client, establishing a secure connection with Bandyer platform.
+            CallClient.getInstance().init(userAlias)
+            false
+        }
 
         //Once you have authenticated your user, you are ready to initialize the call client instance.
         //The call client instance is responsible for making outgoing calls and detecting incoming calls.
@@ -100,17 +110,6 @@ class LoginActivity : BaseActivity(), OnClickListener<UserItem>, OnCallClientObs
             }
 
         })
-    }
-
-    /**
-     * On click on a user from the list initialize the call client for that user
-     * save the userAlias to be used for login after the call client has been initialized
-     */
-    override fun onClick(v: View?, adapter: IAdapter<UserItem>, item: UserItem, position: Int): Boolean {
-        userAlias = item.userAlias
-        //This statement is needed to initialize the call client, establishing a secure connection with Bandyer platform.
-        CallClient.getInstance().init(userAlias)
-        return false
     }
 
     /**

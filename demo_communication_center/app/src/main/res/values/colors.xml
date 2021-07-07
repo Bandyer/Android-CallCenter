@@ -7,8 +7,9 @@
     <color name="colorPrimaryDark">#0c2e41</color>
     <color name="colorPrimary">#0277BD</color>
     <color name="colorPrimaryLight">#29B6F6</color>
-
+    <color name="colorOnPrimary">#ffffff</color>
     <color name="colorAccent">#ED6603</color>
+    <color name="colorOnAccent">#ffffff</color>
 
     <color name="colorBad">#ff000d</color>
     <color name="colorGood">#3fa625</color>

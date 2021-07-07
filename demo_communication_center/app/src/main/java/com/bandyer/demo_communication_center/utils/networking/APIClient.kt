@@ -46,7 +46,7 @@ object APIClient {
 
             val request = original.newBuilder()
                     .header("apikey", apikey)
-                    .method(original.method(), original.body())
+                    .method(original.method, original.body)
                     .build()
 
             chain.proceed(request)

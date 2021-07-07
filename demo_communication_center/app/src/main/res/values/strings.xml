@@ -38,4 +38,8 @@
     <string name="dialog_ok">OK</string>
     <string name="dialog_error_title">Error</string>
 
+    <string name="file_share">File Share</string>
+    <string name="upload">Upload</string>
+    <string name="download">Download</string>
+
 </resources>

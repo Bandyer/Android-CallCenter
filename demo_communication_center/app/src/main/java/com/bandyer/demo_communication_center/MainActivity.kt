@@ -9,20 +9,26 @@ import android.app.Activity
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
-import androidx.recyclerview.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.CheckBox
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bandyer.communication_center.call.*
 import com.bandyer.communication_center.call_client.*
 import com.bandyer.demo_communication_center.adapter_items.UserSelectionItem
+import com.bandyer.demo_communication_center.databinding.ActivityMainBinding
 import com.bandyer.demo_communication_center.utils.LoginManager
 import com.bandyer.demo_communication_center.utils.networking.BandyerUsers
 import com.bandyer.demo_communication_center.utils.networking.MockedNetwork
-import com.mikepenz.fastadapter.commons.adapters.FastItemAdapter
+import com.mikepenz.fastadapter.FastAdapter
+import com.mikepenz.fastadapter.IAdapter
+import com.mikepenz.fastadapter.IItem
+import com.mikepenz.fastadapter.adapters.ItemAdapter
+import com.mikepenz.fastadapter.listeners.ClickEventHook
 import com.mikepenz.fastadapter.select.SelectExtension
-import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
@@ -35,7 +41,8 @@ import java.util.*
  */
 class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObserver, OnCallClientObserver {
 
-    private var fastAdapter: FastItemAdapter<UserSelectionItem>? = null
+    private var fastAdapter: FastAdapter<UserSelectionItem>? = null
+    private val itemAdapter = ItemAdapter<UserSelectionItem>()
     private var calleeSelected: MutableList<String>? = null
     private var dialog: ProgressDialog? = null
 
@@ -45,13 +52,17 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
     // The url may be provided to join an existing call, or to create a new one.
     private var joinUrl: String? = null
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
 
         // We listen for an incoming call.
         CallClient.getInstance().addIncomingCallObserver(this)
-        findViewById<View>(R.id.call).setOnClickListener { call() }
+        binding.call.setOnClickListener { call() }
 
 
         // if no valid user exists, delete all the preferences and show the LoginActivity
@@ -61,7 +72,7 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
 
         // get the user that is currently logged in the sample app
         val userAlias = LoginManager.getLoggedUser(this)
-        userGreeting.text = String.format(resources.getString(R.string.pick_users), userAlias)
+        binding.userGreeting.text = String.format(resources.getString(R.string.pick_users), userAlias)
 
         // in case the MainActivity has been shown by opening an external link, handle it
         handleExternalUrl(intent)
@@ -99,21 +110,16 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
 
     private fun setUpRecyclerView() {
         calleeSelected = ArrayList()
-
-        fastAdapter = FastItemAdapter()
-        fastAdapter?.withSelectable(true)
-
-        fastAdapter?.clear()
+        itemAdapter.clear()
 
         // Fetch the sample users you can use to login with.
         MockedNetwork.getSampleUsers(this, object : Callback<BandyerUsers> {
 
             override fun onResponse(call: retrofit2.Call<BandyerUsers>, response: Response<BandyerUsers>) {
-
                 // Add each user(except the logged one) to the recyclerView adapter to be displayed in the list.
                 for (user in response.body()!!.user_id_list!!)
                     if (user != LoginManager.getLoggedUser(this@MainActivity))
-                        fastAdapter?.add(UserSelectionItem(user))
+                        itemAdapter.add(UserSelectionItem(user))
             }
 
             override fun onFailure(call: retrofit2.Call<BandyerUsers>, t: Throwable) {
@@ -123,20 +129,17 @@ class MainActivity : BaseActivity(), OnIncomingCallObserver, OnCallCreationObser
 
         })
 
-        // on user selection put in a list to be called on click on call button.
-        fastAdapter?.withOnPreClickListener { v, adapter, item, position ->
-            val selectExtension = fastAdapter?.getExtension<SelectExtension<UserSelectionItem>>(SelectExtension::class.java)
-            selectExtension?.toggleSelection(position)
+        fastAdapter = FastAdapter.with(itemAdapter)
+        fastAdapter!!.addEventHook(object : ClickEventHook<UserSelectionItem>() {
+            override fun onClick(v: View, position: Int, fastAdapter: FastAdapter<UserSelectionItem>, item: UserSelectionItem) {
+                if (!(v as CheckBox).isChecked) calleeSelected?.remove(item.name)
+                else calleeSelected?.add(item.name)
+            }
+            override fun onBind(viewHolder: RecyclerView.ViewHolder) = (viewHolder as UserSelectionItem.ViewHolder).binding.checkbox
+        })
 
-            if (!item.isSelected)
-                calleeSelected?.remove(item.name)
-            else
-                calleeSelected?.add(item.name)
-            true
-        }
-
-        contactsList.layoutManager = LinearLayoutManager(this)
-        contactsList.adapter = fastAdapter
+        binding.contactsList.layoutManager = LinearLayoutManager(this)
+        binding.contactsList.adapter = fastAdapter
     }
 
     /**

@@ -5,7 +5,6 @@
 
 package com.bandyer.demo_communication_center
 
-import android.app.Application
 import android.util.Log
 import androidx.multidex.MultiDexApplication
 import com.bandyer.android_common.logging.BaseLogger
@@ -51,27 +50,27 @@ class App : MultiDexApplication() {
 
                         // Utility that prints webSocket communication on the Chrome-console
 
-                        private val stethoReporter = StethoReporter()
+                    private val stethoReporter = StethoReporter()
 
-                        override fun onConnected(tag: String, url: String) {
-                            Log.d(tag, "onConnected $url")
-                            stethoReporter.onCreated(url)
-                        }
+                    override fun onConnected(tag: String, url: String) {
+                        Log.d(tag, "onConnected $url")
+                        stethoReporter.onCreated(url)
+                    }
 
-                        override fun onMessageReceived(tag: String, response: String) {
-                            Log.d(tag, "onMessageReceived $response")
-                            stethoReporter.onReceive(response)
-                        }
+                    override fun onMessageReceived(tag: String, response: String) {
+                        Log.d(tag, "onMessageReceived $response")
+                        stethoReporter.onReceive(response)
+                    }
 
-                        override fun onMessageSent(tag: String, request: String) {
-                            Log.d(tag, "onMessageSent $request")
-                            stethoReporter.onSend(request)
-                        }
+                    override fun onMessageSent(tag: String, request: String) {
+                        Log.d(tag, "onMessageSent $request")
+                        stethoReporter.onSend(request)
+                    }
 
-                        override fun onError(tag: String, reason: String) {
-                            Log.e(tag, "connection error $reason")
-                            stethoReporter.onError(reason)
-                        }
+                    override fun onError(tag: String, reason: String) {
+                        Log.e(tag, "connection error $reason")
+                        stethoReporter.onError(reason)
+                    }
 
                         override fun onDisconnected(tag: String) {
                             Log.d(tag, "onDisconnected")
@@ -79,27 +78,27 @@ class App : MultiDexApplication() {
                         }
                     })
                     // sdk logic logger
-                    .setLogger(object : CommCenterLogger(BaseLogger.VERBOSE) {
+                    .setLogger(object : CommCenterLogger(BaseLogger.ERROR) {
 
-                        // You may want to filter the targets depending on which part you are developing and interested in to log.
-                        override val target: Int
-                            get() = super.target
+                    // You may want to filter the targets depending on which part you are developing and interested in to log.
+                    override val target: Int
+                        get() = super.target
 
-                        override fun verbose(tag: String, message: String) {
-                            Log.v(tag, message)
-                        }
+                    override fun verbose(tag: String, message: String) {
+                        Log.v(tag, message)
+                    }
 
-                        override fun debug(tag: String, message: String) {
-                            Log.d(tag, message)
-                        }
+                    override fun debug(tag: String, message: String) {
+                        Log.d(tag, message)
+                    }
 
-                        override fun info(tag: String, message: String) {
-                            Log.i(tag, message)
-                        }
+                    override fun info(tag: String, message: String) {
+                        Log.i(tag, message)
+                    }
 
-                        override fun warn(tag: String, message: String) {
-                            Log.w(tag, message)
-                        }
+                    override fun warn(tag: String, message: String) {
+                        Log.w(tag, message)
+                    }
 
                         override fun error(tag: String, message: String) {
                             Log.e(tag, message)

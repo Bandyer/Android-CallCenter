@@ -18,8 +18,8 @@ import com.bandyer.communication_center.call.participant.CallParticipant
 import com.bandyer.communication_center.call.participant.OnCallParticipantObserver
 import com.bandyer.communication_center.call_client.CallClient
 import com.bandyer.core_av.room.RoomToken
+import com.bandyer.demo_communication_center.databinding.ActivityDialingBinding
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_dialing.*
 import permissions.dispatcher.*
 
 /**
@@ -35,9 +35,13 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
     private var call: Call? = null
     private var roomToken: RoomToken? = null
 
+    private lateinit var binding: ActivityDialingBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_dialing)
+        binding = ActivityDialingBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
         // Request the current call from the call client
         call = CallClient.getInstance().ongoingCall
         if (call == null)
@@ -50,7 +54,7 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
         // Once we are subscribed, we will be notified anytime a participant status changes
         call!!.participants.addObserver(object : OnCallParticipantObserver {
             override fun onCallParticipantStatusChanged(participant: CallParticipant) {
-                Snackbar.make(callee, participant.status.name, Snackbar.LENGTH_LONG).show()
+                Snackbar.make(binding.callee, participant.status.name, Snackbar.LENGTH_LONG).show()
             }
 
             override fun onCallParticipantUpgradedCallType(participant: CallParticipant, callType: CallType) {
@@ -60,11 +64,11 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
 
         val numberOfUsers = call!!.participants.callees!!.size
 
-        toolbar.title = call?.participants?.callees!!.map {
+        binding.toolbar.title = call?.participants?.callees!!.map {
             it.user.userAlias
         }.joinToString()
 
-        toolbar.subtitle = resources.getQuantityString(R.plurals.user_is_ringing, numberOfUsers)
+        binding.toolbar.subtitle = resources.getQuantityString(R.plurals.user_is_ringing, numberOfUsers)
 
         // display a beautiful girl in case we are in a call with a single user
         if (numberOfUsers == 1)
@@ -72,10 +76,10 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
                     .load("https://images.pexels.com/photos/954559/pexels-photo-954559.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260")
                     .fit()
                     .centerCrop()
-                    .into(callee)
+                    .into(binding.callee)
 
         // On Stop button pressed hangup and go back
-        stop.setOnClickListener {
+        binding.stop.setOnClickListener {
             onBackPressed()
         }
     }
@@ -136,19 +140,19 @@ class DialingActivity : BaseActivity(), OnCallEventObserver {
     internal fun showRationaleForCamera(request: PermissionRequest) {
         AlertDialog.Builder(this)
                 .setMessage(R.string.permission_camera_rationale)
-                .setPositiveButton(R.string.button_allow) { dialog, which -> request.proceed() }
-                .setNegativeButton(R.string.button_deny) { dialog, which -> request.cancel() }
+                .setPositiveButton(R.string.button_allow) { _, _ -> request.proceed() }
+                .setNegativeButton(R.string.button_deny) { _, _ -> request.cancel() }
                 .show()
     }
 
     @OnPermissionDenied(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     internal fun showDeniedForCamera() {
-        Snackbar.make(callee!!, R.string.permission_camera_denied, LENGTH_SHORT).show()
+        Snackbar.make(binding.callee, R.string.permission_camera_denied, LENGTH_SHORT).show()
     }
 
     @OnNeverAskAgain(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
     internal fun showNeverAskForCamera() {
-        Snackbar.make(callee!!, R.string.permission_camera_never_ask_again, LENGTH_SHORT).show()
+        Snackbar.make(binding.callee, R.string.permission_camera_never_ask_again, LENGTH_SHORT).show()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

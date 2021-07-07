@@ -7,4 +7,7 @@
 <resources>
     <item name="user_item_id" type="id" />
     <item name="user_selection_item_id" type="id" />
+    <item name="fastadapter_upload_item_id" type="id" />
+    <item name="fastadapter_download_item_id" type="id" />
+    <item name="fastadapter_download_available_item_id" type="id" />
 </resources>
